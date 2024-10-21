@@ -1109,6 +1109,7 @@
   },
   "projectFileDependencyGroups": {
     "net8.0": [
+      "Microsoft.EntityFrameworkCore.Relational >= 9.0.0-preview.1.24081.2",
       "Pomelo.EntityFrameworkCore.MySql >= 9.0.0-preview.1",
       "Swashbuckle.AspNetCore >= 6.4.0"
     ]
@@ -1158,6 +1159,10 @@
       "net8.0": {
         "targetAlias": "net8.0",
         "dependencies": {
+          "Microsoft.EntityFrameworkCore.Relational": {
+            "target": "Package",
+            "version": "[9.0.0-preview.1.24081.2, )"
+          },
           "Pomelo.EntityFrameworkCore.MySql": {
             "target": "Package",
             "version": "[9.0.0-preview.1, )"
