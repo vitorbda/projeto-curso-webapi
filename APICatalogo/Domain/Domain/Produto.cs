@@ -1,4 +1,4 @@
-﻿namespace APICatalogo.Domain
+﻿namespace Domain.Domain
 {
     public class Produto
     {
