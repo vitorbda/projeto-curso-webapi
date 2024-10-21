@@ -2,7 +2,7 @@
 
 namespace Domain.Domain
 {
-    public class Categoria
+    public class Categoria : BaseModel
     {
         public int Id { get; set; }
         public string? Nome { get; set; }
