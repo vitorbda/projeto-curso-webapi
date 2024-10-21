@@ -48,7 +48,7 @@
           "dependencies": {
             "Microsoft.EntityFrameworkCore.Relational": {
               "target": "Package",
-              "version": "[9.0.0-preview.1.24081.2, )"
+              "version": "[9.0.0-rc.2.24474.1, )"
             },
             "Pomelo.EntityFrameworkCore.MySql": {
               "target": "Package",
@@ -56,7 +56,7 @@
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[6.4.0, )"
+              "version": "[6.9.0, )"
             }
           },
           "imports": [
