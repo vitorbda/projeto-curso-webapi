@@ -95,8 +95,6 @@ C:\Users\joao_\Documents\projeto-curso-WEBAPI\APICatalogo\APICatalogo\bin\Debug\
 C:\Users\joao_\Documents\projeto-curso-WEBAPI\APICatalogo\APICatalogo\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\joao_\Documents\projeto-curso-WEBAPI\APICatalogo\APICatalogo\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\joao_\Documents\projeto-curso-WEBAPI\APICatalogo\APICatalogo\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
-C:\Users\joao_\Documents\projeto-curso-WEBAPI\APICatalogo\APICatalogo\bin\Debug\net8.0\Domain.dll
-C:\Users\joao_\Documents\projeto-curso-WEBAPI\APICatalogo\APICatalogo\bin\Debug\net8.0\Domain.pdb
 C:\Users\joao_\Documents\projeto-curso-WEBAPI\APICatalogo\APICatalogo\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\joao_\Documents\projeto-curso-WEBAPI\APICatalogo\APICatalogo\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\joao_\Documents\projeto-curso-WEBAPI\APICatalogo\APICatalogo\obj\Debug\net8.0\staticwebassets\msbuild.APICatalogo.Microsoft.AspNetCore.StaticWebAssets.props

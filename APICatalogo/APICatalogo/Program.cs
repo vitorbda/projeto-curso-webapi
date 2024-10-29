@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using APICatalogo.Data;
+using APICatalogo.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 

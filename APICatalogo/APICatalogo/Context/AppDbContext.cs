@@ -1,7 +1,7 @@
-﻿using Domain.Domain;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using APICatalogo.Models;
 
-namespace APICatalogo.Data
+namespace APICatalogo.Context
 {
     public class AppDbContext : DbContext
     {
