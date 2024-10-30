@@ -16,6 +16,26 @@ namespace APICatalogo.Controller
             _context = context;
         }
 
+        [HttpGet("primeiro")]
+        public ActionResult<Produto> GetPrimeiro()
+        {
+            try
+            {
+                var produto = _context.Produto?.AsNoTracking().FirstOrDefault();
+
+                if (produto is null)
+                {
+                    return NotFound("Produto não encontrado.");
+                }
+
+                return produto;
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um problema ao tratar a sua solicitação.");
+            }
+        }
+
         [HttpGet]
         public ActionResult<IEnumerable<Produto>> Get()
         {
