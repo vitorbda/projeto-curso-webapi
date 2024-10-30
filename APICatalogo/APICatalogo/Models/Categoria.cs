@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace APICatalogo.Models
@@ -15,6 +16,6 @@ namespace APICatalogo.Models
         [StringLength(300)]
         public string? ImagemUrl { get; set; }
 
-        ICollection<Produto> Produtos { get; set; } = new List<Produto>();
+        public ICollection<Produto>? Produtos { get; set; } = new Collection<Produto>();
     }
 }

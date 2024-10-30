@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using APICatalogo.Context;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseMySql(mySqlConnection,
                 ServerVersion.AutoDetect(mySqlConnection)
             ));
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 
 var app = builder.Build();
 
