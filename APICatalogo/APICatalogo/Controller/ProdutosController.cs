@@ -16,7 +16,7 @@ namespace APICatalogo.Controller
             _context = context;
         }
 
-        [HttpGet("primeiro")]
+        [HttpGet("primeiro/{valor:alpha:length(5)}")]
         public ActionResult<Produto> GetPrimeiro()
         {
             try
@@ -56,7 +56,7 @@ namespace APICatalogo.Controller
             }
         }
 
-        [HttpGet("{id:int}", Name = "ObterProduto")]
+        [HttpGet("{id:int:min(1)}", Name = "ObterProduto")]
         public ActionResult<Produto> Get(int id) 
         {
             try
