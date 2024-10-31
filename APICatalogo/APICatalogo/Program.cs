@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using APICatalogo.Services;
 using APICatalogo.Extensions;
 using APICatalogo.Logging;
+using APICatalogo.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +20,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
                 ServerVersion.AutoDetect(mySqlConnection)
             ));
 
-builder.Services.AddControllers().AddJsonOptions(options =>
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add(typeof(ApiExceptionFilter));
+})
+.AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
