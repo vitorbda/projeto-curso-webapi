@@ -1,8 +1,12 @@
 ﻿using APICatalogo.Context;
+using APICatalogo.Filters;
 using APICatalogo.Models;
+using APICatalogo.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
+using System.Text;
 
 namespace APICatalogo.Controller
 {
@@ -11,10 +15,34 @@ namespace APICatalogo.Controller
     public class CategoriaController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IConfiguration _configuration;
+        private readonly ILogger _logger;
 
-        public CategoriaController(AppDbContext context)
+        public CategoriaController(AppDbContext context, IConfiguration configuration, ILogger<CategoriaController> logger)
         {
             _context = context;
+            _configuration = configuration;
+            _logger = logger;
+        }
+
+        [HttpGet("LerArquivoConfiguracao")]
+        public ActionResult<string> GetValores()
+        {
+            _logger.LogInformation("====================== Categoria/GetValores ==============================");
+
+            var valor1 = _configuration["chave1"];
+            var valor2 = _configuration.GetValue<string>("chave2");
+
+            var secao1 = _configuration.GetValue<string>("secao1:chave1");
+            var secao1_ = _configuration["secao1:chave2"];
+
+            return ConcatenaValores(valor1, valor2, secao1, secao1_);
+        }
+
+        [HttpGet("UsandoFromServices/{nome}")]
+        public ActionResult<string> GetSaudacaoFromServices([FromServices] IMeuServico meuServico, string nome)
+        {
+            return meuServico.Saudacao(nome);
         }
 
         [HttpGet("produtos")]
@@ -24,11 +52,12 @@ namespace APICatalogo.Controller
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Categoria>> Get()
+        [ServiceFilter(typeof(ApiLoggingFilter))]
+        public async Task<ActionResult<IEnumerable<Categoria>>> Get()
         {
             try
             {
-                return _context.Categoria?.AsNoTracking().ToList();
+                return await _context.Categoria?.AsNoTracking().ToListAsync();
             }
             catch (Exception)
             {
@@ -98,6 +127,17 @@ namespace APICatalogo.Controller
                 return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um problema ao tratar a sua solicitação.");
             }
 
+        }
+
+
+        private string ConcatenaValores(params string[] valores)
+        {
+            var valoresConcatenados = new StringBuilder();
+
+            for (int i = 0; i < valores.Length; i++)
+                valoresConcatenados.Append($"valor({i + 1}) = {valores[i]} \n");
+
+            return valoresConcatenados.ToString();
         }
     }
 }

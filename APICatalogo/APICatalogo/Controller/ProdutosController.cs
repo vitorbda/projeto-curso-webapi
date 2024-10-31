@@ -1,6 +1,8 @@
 ﻿using APICatalogo.Context;
+using APICatalogo.Filters;
 using APICatalogo.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace APICatalogo.Controller
@@ -16,12 +18,32 @@ namespace APICatalogo.Controller
             _context = context;
         }
 
-        [HttpGet]
-        public ActionResult<IEnumerable<Produto>> Get()
+        [HttpGet("primeiro/{valor:alpha:length(5)}")]
+        public ActionResult<Produto> GetPrimeiro()
         {
             try
             {
-                var produtos = _context.Produto?.AsNoTracking().ToList();
+                var produto = _context.Produto?.AsNoTracking().FirstOrDefault();
+
+                if (produto is null)
+                {
+                    return NotFound("Produto não encontrado.");
+                }
+
+                return produto;
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um problema ao tratar a sua solicitação.");
+            }
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Produto>>> Get()
+        {
+            try
+            {                        
+                var produtos = await _context.Produto.AsNoTracking().ToListAsync();
 
                 if (produtos is null)
                 {
@@ -36,12 +58,12 @@ namespace APICatalogo.Controller
             }
         }
 
-        [HttpGet("{id:int}", Name = "ObterProduto")]
-        public ActionResult<Produto> Get(int id) 
+        [HttpGet("{id:int:min(1)}", Name = "ObterProduto")]
+        public async Task<ActionResult<Produto>> Get([FromQuery] int id) 
         {
             try
             {
-                var produto = _context.Produto?.AsNoTracking().FirstOrDefault(x => x.Id == id);
+                var produto = await _context.Produto?.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
 
                 if (produto is null)
                 {
@@ -57,10 +79,16 @@ namespace APICatalogo.Controller
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(ApiLoggingFilter))]
         public ActionResult Post(Produto produto) 
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
                 if (produto is null)
                 {
                     return BadRequest();
@@ -76,6 +104,16 @@ namespace APICatalogo.Controller
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um problema ao tratar a sua solicitação.");
             }
+        }
+
+        [HttpPost("teste")]
+        [ServiceFilter(typeof(ApiLoggingFilter))]
+        public ActionResult Post(List<Produto> produtos)
+        {
+            _context.Produto.AddRange(produtos);
+            _context.SaveChanges();
+
+            return Ok();
         }
 
         [HttpPut("{id:int}")]
