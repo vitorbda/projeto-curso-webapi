@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using APICatalogo.Context;
 using System.Text.Json.Serialization;
 using APICatalogo.Services;
+using APICatalogo.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.ConfigureExceptionHandler();
 }
 
 app.UseHttpsRedirection();
