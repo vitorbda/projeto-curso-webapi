@@ -1,4 +1,5 @@
 ﻿using APICatalogo.Context;
+using APICatalogo.Filters;
 using APICatalogo.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -78,6 +79,7 @@ namespace APICatalogo.Controller
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(ApiLoggingFilter))]
         public ActionResult Post(Produto produto) 
         {
             try
@@ -102,6 +104,16 @@ namespace APICatalogo.Controller
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um problema ao tratar a sua solicitação.");
             }
+        }
+
+        [HttpPost("teste")]
+        [ServiceFilter(typeof(ApiLoggingFilter))]
+        public ActionResult Post(List<Produto> produtos)
+        {
+            _context.Produto.AddRange(produtos);
+            _context.SaveChanges();
+
+            return Ok();
         }
 
         [HttpPut("{id:int}")]
