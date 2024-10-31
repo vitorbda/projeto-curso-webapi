@@ -3,6 +3,7 @@ using APICatalogo.Context;
 using System.Text.Json.Serialization;
 using APICatalogo.Services;
 using APICatalogo.Extensions;
+using APICatalogo.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,11 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 builder.Services.ConfigureServices();
+
+builder.Logging.AddProvider(new CustomLoggerProvider(new CustomLoggerProviderConfiguration
+{
+    LogLevel = LogLevel.Information
+}));
 
 var app = builder.Build();
 
