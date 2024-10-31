@@ -16,16 +16,20 @@ namespace APICatalogo.Controller
     {
         private readonly AppDbContext _context;
         private readonly IConfiguration _configuration;
+        private readonly ILogger _logger;
 
-        public CategoriaController(AppDbContext context, IConfiguration configuration)
+        public CategoriaController(AppDbContext context, IConfiguration configuration, ILogger<CategoriaController> logger)
         {
             _context = context;
             _configuration = configuration;
+            _logger = logger;
         }
 
         [HttpGet("LerArquivoConfiguracao")]
         public ActionResult<string> GetValores()
         {
+            _logger.LogInformation("====================== Categoria/GetValores ==============================");
+
             var valor1 = _configuration["chave1"];
             var valor2 = _configuration.GetValue<string>("chave2");
 
