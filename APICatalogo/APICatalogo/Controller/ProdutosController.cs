@@ -41,7 +41,7 @@ namespace APICatalogo.Controller
         public async Task<ActionResult<IEnumerable<Produto>>> Get()
         {
             try
-            {
+            {                        
                 var produtos = await _context.Produto.AsNoTracking().ToListAsync();
 
                 if (produtos is null)
@@ -82,6 +82,11 @@ namespace APICatalogo.Controller
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
                 if (produto is null)
                 {
                     return BadRequest();

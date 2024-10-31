@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using APICatalogo.Context;
 using System.Text.Json.Serialization;
+using APICatalogo.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,8 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
+
+builder.Services.AddTransient<IMeuServico, MeuServico>();
 
 var app = builder.Build();
 
