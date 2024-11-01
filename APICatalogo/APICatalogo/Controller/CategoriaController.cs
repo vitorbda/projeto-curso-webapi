@@ -1,6 +1,7 @@
 ﻿using APICatalogo.Context;
 using APICatalogo.Filters;
 using APICatalogo.Models;
+using APICatalogo.Repositories;
 using APICatalogo.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,13 +15,13 @@ namespace APICatalogo.Controller
     [ApiController]
     public class CategoriaController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly ICategoriaRepository _repository;
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
 
-        public CategoriaController(AppDbContext context, IConfiguration configuration, ILogger<CategoriaController> logger)
+        public CategoriaController(ICategoriaRepository repository, IConfiguration configuration, ILogger<CategoriaController> logger)
         {
-            _context = context;
+            _repository = repository;
             _configuration = configuration;
             _logger = logger;
         }
@@ -48,16 +49,17 @@ namespace APICatalogo.Controller
         [HttpGet("produtos")]
         public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
         {
-            return _context.Categoria.Include(x => x.Produtos).AsNoTracking().ToList();
+            var categorias = _repository.GetCategorias();
+            return Ok(categorias);
         }
 
         [HttpGet]
         [ServiceFilter(typeof(ApiLoggingFilter))]
-        public async Task<ActionResult<IEnumerable<Categoria>>> Get()
+        public ActionResult<IEnumerable<Categoria>> Get()
         {
             try
             {
-                return await _context.Categoria?.AsNoTracking().ToListAsync();
+                return Ok(_repository.GetCategorias());
             }
             catch (Exception)
             {
@@ -70,7 +72,7 @@ namespace APICatalogo.Controller
         {
             try
             {
-                var categoria = _context.Categoria?.AsNoTracking().FirstOrDefault(x => x.Id == id);
+                var categoria = _repository.GetCategoria(id);
 
                 if (categoria is null)
                 {
@@ -95,8 +97,7 @@ namespace APICatalogo.Controller
                     return BadRequest();
                 }
 
-                _context.Categoria?.Add(categoria);
-                _context.SaveChanges();
+                categoria = _repository.Create(categoria);
 
                 return new CreatedAtRouteResult("ObterCategoria",
                     new { id = categoria.Id }, categoria);
@@ -117,8 +118,7 @@ namespace APICatalogo.Controller
                     return BadRequest();
                 }
 
-                _context.Entry(categoria).State = EntityState.Modified;
-                _context.SaveChanges();
+                _repository.Update(categoria);
 
                 return Ok(categoria);
             }
@@ -127,6 +127,20 @@ namespace APICatalogo.Controller
                 return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um problema ao tratar a sua solicitação.");
             }
 
+        }
+
+        [HttpDelete]
+        public ActionResult<Categoria> Delete(int id) 
+        {
+            try
+            {
+                var categoriaDeletada = _repository.Delete(id);
+                return Ok(categoriaDeletada);
+            }
+            catch 
+            {
+                throw;
+            }            
         }
 
 

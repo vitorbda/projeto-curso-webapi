@@ -1,4 +1,5 @@
 ﻿using APICatalogo.Filters;
+using APICatalogo.Repositories;
 using APICatalogo.Services;
 
 namespace APICatalogo.Extensions
@@ -10,6 +11,7 @@ namespace APICatalogo.Extensions
             services.AddTransient<IMeuServico, MeuServico>();
 
             services.AddScoped<ApiLoggingFilter>();
+            services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 
             return services;
         }
