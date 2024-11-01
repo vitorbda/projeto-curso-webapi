@@ -49,7 +49,7 @@ namespace APICatalogo.Controller
         [HttpGet("produtos")]
         public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
         {
-            var categorias = _repository.GetCategorias();
+            var categorias = _repository.Get();
             return Ok(categorias);
         }
 
@@ -59,7 +59,7 @@ namespace APICatalogo.Controller
         {
             try
             {
-                return Ok(_repository.GetCategorias());
+                return Ok(_repository.Get());
             }
             catch (Exception)
             {
@@ -72,13 +72,11 @@ namespace APICatalogo.Controller
         {
             try
             {
-                var categoria = _repository.GetCategoria(id);
+                var categoria = _repository.Get(c => c.Id == id);
 
-                if (categoria is null)
-                {
+                if (categoria is null)                
                     return NotFound("Produto não encontrado.");
-                }
-
+                
                 return Ok(categoria);
             }
             catch (Exception)
@@ -92,10 +90,8 @@ namespace APICatalogo.Controller
         {
             try
             {
-                if (categoria is null)
-                {
-                    return BadRequest();
-                }
+                if (categoria is null)                
+                    return BadRequest();                
 
                 categoria = _repository.Create(categoria);
 
@@ -113,10 +109,8 @@ namespace APICatalogo.Controller
         {
             try
             {
-                if (id != categoria.Id)
-                {
-                    return BadRequest();
-                }
+                if (id != categoria.Id)                
+                    return BadRequest();                
 
                 _repository.Update(categoria);
 
@@ -134,7 +128,10 @@ namespace APICatalogo.Controller
         {
             try
             {
-                var categoriaDeletada = _repository.Delete(id);
+                var categoria = _repository.Get(c => c.Id == id);
+
+                var categoriaDeletada = _repository.Delete(categoria);
+
                 return Ok(categoriaDeletada);
             }
             catch 

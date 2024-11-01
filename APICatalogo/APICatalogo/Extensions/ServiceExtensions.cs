@@ -13,6 +13,7 @@ namespace APICatalogo.Extensions
             services.AddScoped<ApiLoggingFilter>();
             services.AddScoped<ICategoriaRepository, CategoriaRepository>();
             services.AddScoped<IProdutoRepository, ProdutoRepository>();
+            services.AddScoped<IRepository<Type>, Repository<Type>>();
 
             return services;
         }

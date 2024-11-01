@@ -24,7 +24,7 @@ namespace APICatalogo.Controller
         {
             try
             {
-                var produto = _repository.GetProdutos().FirstOrDefault();
+                var produto = _repository.Get().FirstOrDefault();
 
                 if (produto is null)                
                     return NotFound("Produto não encontrado.");
@@ -37,12 +37,30 @@ namespace APICatalogo.Controller
             }
         }
 
+        [HttpGet("produto/{id}")]
+        public ActionResult<IEnumerable<Produto>> GetProdutoPorCategoria(int id)
+        {
+            try
+            {
+                var categorias = _repository.GetProdutosPorCategoria(id);
+
+                if (categorias is null)
+                    return NotFound("Produtos não encontrados");
+
+                return Ok(categorias);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         [HttpGet]
         public ActionResult<IEnumerable<Produto>> Get()
         {
             try
             {                        
-                var produtos = _repository.GetProdutos().ToList();
+                var produtos = _repository.Get().ToList();
 
                 if (produtos is null)                
                     return NotFound("Produtos não encontrados.");
@@ -60,7 +78,7 @@ namespace APICatalogo.Controller
         {
             try
             {
-                var produto = _repository.GetProduto(id);
+                var produto = _repository.Get(p => p.Id == id);
 
                 if (produto is null)                
                     return NotFound("Produto não encontrado.");                
@@ -117,10 +135,7 @@ namespace APICatalogo.Controller
                 if (id != produto.Id)                
                     return BadRequest();                
 
-                var produtoAtualizado = _repository.Update(produto);
-
-                if (!produtoAtualizado)
-                    return StatusCode(StatusCodes.Status500InternalServerError, $"Falha ao atualizar o produto [Id = {id}]");
+                _repository.Update(produto);
 
                 return Ok(produto);
             }
@@ -131,16 +146,14 @@ namespace APICatalogo.Controller
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult Delete(int id)
+        public ActionResult<Produto> Delete(int id)
         {
             try
             {
-                var acaoExecutada = _repository.Delete(id);
+                var produto = _repository.Get(p => p.Id == id);
+                _repository.Delete(produto);
 
-                if (!acaoExecutada)
-                    return StatusCode(StatusCodes.Status500InternalServerError, $"Falha ao excluir o produto [Id = {id}]");
-
-                return Ok();
+                return Ok(produto);
             }
             catch (Exception)
             {
