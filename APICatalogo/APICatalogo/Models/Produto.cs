@@ -26,7 +26,8 @@ namespace APICatalogo.Models
         [StringLength(300)]
         public string ImagemUrl { get; set; }
         public float Estoque { get; set; }
-        public DateTime DataCadastro { get; set; }
+        [JsonIgnore]
+        public DateTime DataCadastro { get; set; } = DateTime.Now;
         public int CategoriaId { get; set; }
 
         [JsonIgnore]
