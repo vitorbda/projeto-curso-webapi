@@ -2,6 +2,7 @@
 using APICatalogo.DTOs;
 using APICatalogo.Filters;
 using APICatalogo.Models;
+using APICatalogo.Pagination;
 using APICatalogo.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
@@ -23,6 +24,24 @@ namespace APICatalogo.Controller
         {
             _uof = unitOfWork;
             _mapper = mapper;
+        }
+
+        [HttpGet("GetProdutosPagination")]
+        public ActionResult<IEnumerable<ProdutoDTO>> GetProdutos([FromQuery] ProdutosParameters prodParams)
+        {
+            try
+            {
+                var produtos = _uof.ProdutoRepository.GetProdutos(prodParams);
+                if (produtos is null)
+                    return NotFound();
+
+                return Ok(_mapper.Map<IEnumerable<ProdutoDTO>>(produtos));
+
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um problema ao tratar a sua solicitação.");
+            }
         }
 
         [HttpPatch("{id}/UpdatePartial")]
