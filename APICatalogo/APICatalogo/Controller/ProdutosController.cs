@@ -1,4 +1,5 @@
 ﻿using APICatalogo.Context;
+using APICatalogo.DTOs;
 using APICatalogo.Filters;
 using APICatalogo.Models;
 using APICatalogo.Repositories;
@@ -20,7 +21,7 @@ namespace APICatalogo.Controller
         }
 
         [HttpGet("primeiro/{valor:alpha:length(5)}")]
-        public ActionResult<Produto> GetPrimeiro()
+        public ActionResult<ProdutoDTO> GetPrimeiro()
         {
             try
             {
@@ -38,7 +39,7 @@ namespace APICatalogo.Controller
         }
 
         [HttpGet("produto/{id}")]
-        public ActionResult<IEnumerable<Produto>> GetProdutoPorCategoria(int id)
+        public ActionResult<IEnumerable<ProdutoDTO>> GetProdutoPorCategoria(int id)
         {
             try
             {
@@ -56,7 +57,7 @@ namespace APICatalogo.Controller
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Produto>> Get()
+        public ActionResult<IEnumerable<ProdutoDTO>> Get()
         {
             try
             {                        
@@ -74,7 +75,7 @@ namespace APICatalogo.Controller
         }
 
         [HttpGet("{id:int:min(1)}", Name = "ObterProduto")]
-        public ActionResult<Produto> Get([FromQuery] int id) 
+        public ActionResult<ProdutoDTO> Get([FromQuery] int id) 
         {
             try
             {
@@ -93,21 +94,21 @@ namespace APICatalogo.Controller
 
         [HttpPost]
         [ServiceFilter(typeof(ApiLoggingFilter))]
-        public ActionResult Post(Produto produto) 
+        public ActionResult<ProdutoDTO> Post(ProdutoDTO produtoDto) 
         {
             try
             {
                 if (!ModelState.IsValid)                
                     return BadRequest(ModelState);                
 
-                if (produto is null)                
+                if (produtoDto is null)                
                     return BadRequest();
 
-                var produtoCriado = _uof.ProdutoRepository.Create(produto);
+                var produtoCriado = _uof.ProdutoRepository.Create(produtoDto);
                 _uof.Commit();
 
                 return new CreatedAtRouteResult("ObterProduto",
-                    new { id = produtoCriado.Id }, produto);
+                    new { id = produtoCriado.Id }, produtoDto);
             }
             catch (Exception)
             {
@@ -118,29 +119,29 @@ namespace APICatalogo.Controller
 
         [HttpPost("teste")]
         [ServiceFilter(typeof(ApiLoggingFilter))]
-        public ActionResult<IEnumerable<Produto>> Post(IEnumerable<Produto> produtos)
+        public ActionResult<IEnumerable<ProdutoDTO>> Post(IEnumerable<ProdutoDTO> produtosDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            _uof.ProdutoRepository.Create(produtos);
+            _uof.ProdutoRepository.Create(produtosDto);
             _uof.Commit();
 
-            return Ok(produtos);
+            return Ok(produtosDto);
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult Put(int id, Produto produto)
+        public ActionResult<ProdutoDTO> Put(int id, ProdutoDTO produtoDto)
         {
             try
             {
-                if (id != produto.Id)                
+                if (id != produtoDto.Id)                
                     return BadRequest();                
 
-                _uof.ProdutoRepository.Update(produto);
+                _uof.ProdutoRepository.Update(produtoDto);
                 _uof.Commit();
 
-                return Ok(produto);
+                return Ok(produtoDto);
             }
             catch (Exception)
             {
@@ -149,7 +150,7 @@ namespace APICatalogo.Controller
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult<Produto> Delete(int id)
+        public ActionResult<ProdutoDTO> Delete(int id)
         {
             try
             {
