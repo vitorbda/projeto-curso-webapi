@@ -12,11 +12,11 @@ namespace APICatalogo.Controller
     [ApiController]
     public class ProdutosController : ControllerBase
     {
-        private readonly IProdutoRepository _repository;
+        private readonly IUnitOfWork _uof;
 
-        public ProdutosController(IProdutoRepository produtoRepository)
+        public ProdutosController(IUnitOfWork unitOfWork)
         {
-            _repository = produtoRepository;
+            _uof = unitOfWork;
         }
 
         [HttpGet("primeiro/{valor:alpha:length(5)}")]
@@ -24,7 +24,7 @@ namespace APICatalogo.Controller
         {
             try
             {
-                var produto = _repository.Get().FirstOrDefault();
+                var produto = _uof.ProdutoRepository.Get().FirstOrDefault();
 
                 if (produto is null)                
                     return NotFound("Produto não encontrado.");
@@ -42,7 +42,7 @@ namespace APICatalogo.Controller
         {
             try
             {
-                var produtos = _repository.GetProdutosPorCategoria(id);                
+                var produtos = _uof.ProdutoRepository.GetProdutosPorCategoria(id);                
 
                 if (produtos is null  || !produtos.Any())
                     return NotFound("Produtos não encontrados");
@@ -60,7 +60,7 @@ namespace APICatalogo.Controller
         {
             try
             {                        
-                var produtos = _repository.Get().ToList();
+                var produtos = _uof.ProdutoRepository.Get().ToList();
 
                 if (produtos is null)                
                     return NotFound("Produtos não encontrados.");
@@ -78,7 +78,7 @@ namespace APICatalogo.Controller
         {
             try
             {
-                var produto = _repository.Get(p => p.Id == id);
+                var produto = _uof.ProdutoRepository.Get(p => p.Id == id);
 
                 if (produto is null)                
                     return NotFound("Produto não encontrado.");                
@@ -103,7 +103,8 @@ namespace APICatalogo.Controller
                 if (produto is null)                
                     return BadRequest();
 
-                var produtoCriado = _repository.Create(produto);
+                var produtoCriado = _uof.ProdutoRepository.Create(produto);
+                _uof.Commit();
 
                 return new CreatedAtRouteResult("ObterProduto",
                     new { id = produtoCriado.Id }, produto);
@@ -122,7 +123,8 @@ namespace APICatalogo.Controller
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            _repository.Create(produtos);
+            _uof.ProdutoRepository.Create(produtos);
+            _uof.Commit();
 
             return Ok(produtos);
         }
@@ -135,7 +137,8 @@ namespace APICatalogo.Controller
                 if (id != produto.Id)                
                     return BadRequest();                
 
-                _repository.Update(produto);
+                _uof.ProdutoRepository.Update(produto);
+                _uof.Commit();
 
                 return Ok(produto);
             }
@@ -150,8 +153,9 @@ namespace APICatalogo.Controller
         {
             try
             {
-                var produto = _repository.Get(p => p.Id == id);
-                _repository.Delete(produto);
+                var produto = _uof.ProdutoRepository.Get(p => p.Id == id);
+                _uof.ProdutoRepository.Delete(produto);
+                _uof.Commit();
 
                 return Ok(produto);
             }

@@ -1,4 +1,5 @@
 ﻿using APICatalogo.Context;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace APICatalogo.Repositories
@@ -13,7 +14,7 @@ namespace APICatalogo.Repositories
 
         public virtual IEnumerable<T> Get()
         {
-            return _context.Set<T>().ToList();
+            return _context.Set<T>().AsNoTracking().ToList();
         }
 
         public virtual T Get(Expression<Func<T, bool>> predicate)
@@ -24,7 +25,6 @@ namespace APICatalogo.Repositories
         public virtual T Create(T entity)
         {
             _context.Set<T>().Add(entity);
-            _context.SaveChanges();
 
             return entity;
         }
@@ -32,7 +32,6 @@ namespace APICatalogo.Repositories
         public virtual IEnumerable<T> Create(IEnumerable<T> entities)
         {
             _context.Set<T>().AddRange(entities);
-            _context.SaveChanges();
 
             return entities;
         }
@@ -47,7 +46,6 @@ namespace APICatalogo.Repositories
         public virtual T Delete(T entity)
         {
             _context.Set<T>().Remove(entity);
-            _context.SaveChanges();
 
             return entity;
         }

@@ -15,13 +15,13 @@ namespace APICatalogo.Controller
     [ApiController]
     public class CategoriaController : ControllerBase
     {
-        private readonly ICategoriaRepository _repository;
+        private readonly IUnitOfWork _uof;
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
 
-        public CategoriaController(ICategoriaRepository repository, IConfiguration configuration, ILogger<CategoriaController> logger)
+        public CategoriaController(IUnitOfWork uof, IConfiguration configuration, ILogger<CategoriaController> logger)
         {
-            _repository = repository;
+            _uof = uof;
             _configuration = configuration;
             _logger = logger;
         }
@@ -49,7 +49,7 @@ namespace APICatalogo.Controller
         [HttpGet("produtos")]
         public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
         {
-            var categorias = _repository.Get();
+            var categorias = _uof.CategoriaRepository.Get();
             return Ok(categorias);
         }
 
@@ -59,7 +59,7 @@ namespace APICatalogo.Controller
         {
             try
             {
-                return Ok(_repository.Get());
+                return Ok(_uof.CategoriaRepository.Get());
             }
             catch (Exception)
             {
@@ -72,7 +72,7 @@ namespace APICatalogo.Controller
         {
             try
             {
-                var categoria = _repository.Get(c => c.Id == id);
+                var categoria = _uof.CategoriaRepository.Get(c => c.Id == id);
 
                 if (categoria is null)                
                     return NotFound("Categoria não encontrada.");
@@ -93,7 +93,8 @@ namespace APICatalogo.Controller
                 if (categoria is null)                
                     return BadRequest();                
 
-                categoria = _repository.Create(categoria);
+                categoria = _uof.CategoriaRepository.Create(categoria);
+                _uof.Commit();
 
                 return new CreatedAtRouteResult("ObterCategoria",
                     new { id = categoria.Id }, categoria);
@@ -110,9 +111,10 @@ namespace APICatalogo.Controller
             try
             {
                 if (id != categoria.Id)                
-                    return BadRequest();                
+                    return BadRequest();
 
-                _repository.Update(categoria);
+                _uof.CategoriaRepository.Update(categoria);
+                _uof.Commit();
 
                 return Ok(categoria);
             }
@@ -128,11 +130,12 @@ namespace APICatalogo.Controller
         {
             try
             {
-                var categoria = _repository.Get(c => c.Id == id);
+                var categoria = _uof.CategoriaRepository.Get(c => c.Id == id);
                 if (categoria is null)
                     return NotFound("Categoria não encontrada");
 
-                var categoriaDeletada = _repository.Delete(categoria);
+                var categoriaDeletada = _uof.CategoriaRepository.Delete(categoria);
+                _uof.Commit();
 
                 return Ok(categoriaDeletada);
             }
