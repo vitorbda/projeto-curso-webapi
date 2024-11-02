@@ -1,4 +1,5 @@
 ﻿using APICatalogo.Context;
+using APICatalogo.DTOs;
 using APICatalogo.Filters;
 using APICatalogo.Models;
 using APICatalogo.Repositories;
@@ -47,7 +48,7 @@ namespace APICatalogo.Controller
         }
 
         [HttpGet("produtos")]
-        public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
+        public ActionResult<IEnumerable<CategoriaDTO>> GetCategoriasProdutos()
         {
             var categorias = _uof.CategoriaRepository.Get();
             return Ok(categorias);
@@ -55,7 +56,7 @@ namespace APICatalogo.Controller
 
         [HttpGet]
         [ServiceFilter(typeof(ApiLoggingFilter))]
-        public ActionResult<IEnumerable<Categoria>> Get()
+        public ActionResult<IEnumerable<CategoriaDTO>> Get()
         {
             try
             {
@@ -68,7 +69,7 @@ namespace APICatalogo.Controller
         }
 
         [HttpGet("{id:int}", Name = "ObterCategoria")]
-        public ActionResult Get(int id) 
+        public ActionResult<CategoriaDTO> Get(int id) 
         {
             try
             {
@@ -86,18 +87,18 @@ namespace APICatalogo.Controller
         }
 
         [HttpPost]
-        public ActionResult Post(Categoria categoria)
+        public ActionResult<CategoriaDTO> Post(CategoriaDTO categoriaDto)
         {
             try
             {
-                if (categoria is null)                
-                    return BadRequest();                
+                if (categoriaDto is null)                
+                    return BadRequest();
 
-                categoria = _uof.CategoriaRepository.Create(categoria);
+                categoriaDto = _uof.CategoriaRepository.Create(categoriaDto);
                 _uof.Commit();
 
                 return new CreatedAtRouteResult("ObterCategoria",
-                    new { id = categoria.Id }, categoria);
+                    new { id = categoriaDto.Id }, categoriaDto);
             }
             catch (Exception)
             {
@@ -106,17 +107,17 @@ namespace APICatalogo.Controller
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult Put(int id, Categoria categoria)
+        public ActionResult<CategoriaDTO> Put(int id, CategoriaDTO categoriaDto)
         {
             try
             {
-                if (id != categoria.Id)                
+                if (id != categoriaDto.Id)                
                     return BadRequest();
 
-                _uof.CategoriaRepository.Update(categoria);
+                _uof.CategoriaRepository.Update(categoriaDto);
                 _uof.Commit();
 
-                return Ok(categoria);
+                return Ok(categoriaDto);
             }
             catch (Exception)
             {
@@ -126,7 +127,7 @@ namespace APICatalogo.Controller
         }
 
         [HttpDelete]
-        public ActionResult<Categoria> Delete(int id) 
+        public ActionResult<CategoriaDTO> Delete(int id) 
         {
             try
             {
