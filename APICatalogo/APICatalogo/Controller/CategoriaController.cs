@@ -4,6 +4,7 @@ using APICatalogo.Filters;
 using APICatalogo.Models;
 using APICatalogo.Repositories;
 using APICatalogo.Services;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,12 +20,14 @@ namespace APICatalogo.Controller
         private readonly IUnitOfWork _uof;
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
+        private readonly IMapper _mapper;
 
-        public CategoriaController(IUnitOfWork uof, IConfiguration configuration, ILogger<CategoriaController> logger)
+        public CategoriaController(IUnitOfWork uof, IConfiguration configuration, ILogger<CategoriaController> logger, IMapper mapper)
         {
             _uof = uof;
             _configuration = configuration;
             _logger = logger;
+            _mapper = mapper;
         }
 
         [HttpGet("LerArquivoConfiguracao")]
@@ -50,8 +53,18 @@ namespace APICatalogo.Controller
         [HttpGet("produtos")]
         public ActionResult<IEnumerable<CategoriaDTO>> GetCategoriasProdutos()
         {
-            var categorias = _uof.CategoriaRepository.Get();
-            return Ok(categorias);
+            try
+            {
+                var categorias = _uof.CategoriaRepository.Get();
+
+                var categoriasDto = _mapper.Map<IEnumerable<CategoriaDTO>>(categorias);
+
+                return Ok(categorias);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um problema ao tratar a sua solicitação.");
+            }            
         }
 
         [HttpGet]
@@ -60,7 +73,11 @@ namespace APICatalogo.Controller
         {
             try
             {
-                return Ok(_uof.CategoriaRepository.Get());
+                var categorias = _uof.CategoriaRepository.Get();
+
+                var categoriasDto = _mapper.Map<IEnumerable<CategoriaDTO>>(categorias);
+
+                return Ok(categoriasDto);
             }
             catch (Exception)
             {
@@ -77,8 +94,10 @@ namespace APICatalogo.Controller
 
                 if (categoria is null)                
                     return NotFound("Categoria não encontrada.");
-                
-                return Ok(categoria);
+
+                var categoriaDto = _mapper.Map<CategoriaDTO>(categoria);
+
+                return Ok(categoriaDto);
             }
             catch (Exception)
             {
@@ -94,7 +113,9 @@ namespace APICatalogo.Controller
                 if (categoriaDto is null)                
                     return BadRequest();
 
-                categoriaDto = _uof.CategoriaRepository.Create(categoriaDto);
+                var categoria = _mapper.Map<Categoria>(categoriaDto);
+
+                categoriaDto.Id = _uof.CategoriaRepository.Create(categoria).Id;
                 _uof.Commit();
 
                 return new CreatedAtRouteResult("ObterCategoria",
@@ -114,7 +135,9 @@ namespace APICatalogo.Controller
                 if (id != categoriaDto.Id)                
                     return BadRequest();
 
-                _uof.CategoriaRepository.Update(categoriaDto);
+                var categoria = _mapper.Map<Categoria>(categoriaDto);
+
+                _uof.CategoriaRepository.Update(categoria);
                 _uof.Commit();
 
                 return Ok(categoriaDto);
@@ -138,7 +161,9 @@ namespace APICatalogo.Controller
                 var categoriaDeletada = _uof.CategoriaRepository.Delete(categoria);
                 _uof.Commit();
 
-                return Ok(categoriaDeletada);
+                var categoriaDeletadaDto = _mapper.Map<CategoriaDTO>(categoriaDeletada);
+
+                return Ok(categoriaDeletadaDto);
             }
             catch 
             {

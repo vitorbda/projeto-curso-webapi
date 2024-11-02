@@ -3,9 +3,11 @@ using APICatalogo.DTOs;
 using APICatalogo.Filters;
 using APICatalogo.Models;
 using APICatalogo.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace APICatalogo.Controller
 {
@@ -14,10 +16,12 @@ namespace APICatalogo.Controller
     public class ProdutosController : ControllerBase
     {
         private readonly IUnitOfWork _uof;
+        private readonly IMapper _mapper;
 
-        public ProdutosController(IUnitOfWork unitOfWork)
+        public ProdutosController(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _uof = unitOfWork;
+            _mapper = mapper;
         }
 
         [HttpGet("primeiro/{valor:alpha:length(5)}")]
@@ -29,8 +33,10 @@ namespace APICatalogo.Controller
 
                 if (produto is null)                
                     return NotFound("Produto não encontrado.");
-                
-                return produto;
+
+                var produtoDto = _mapper.Map<ProdutoDTO>(produto);
+
+                return produtoDto;
             }
             catch (Exception)
             {
@@ -48,7 +54,9 @@ namespace APICatalogo.Controller
                 if (produtos is null  || !produtos.Any())
                     return NotFound("Produtos não encontrados");
 
-                return Ok(produtos);
+                var produtosDto = _mapper.Map<IEnumerable<ProdutoDTO>>(produtos);
+
+                return Ok(produtosDto);
             }
             catch
             {
@@ -65,8 +73,10 @@ namespace APICatalogo.Controller
 
                 if (produtos is null)                
                     return NotFound("Produtos não encontrados.");
-                
-                return produtos;
+
+                var produtosDto = _mapper.Map<IEnumerable<ProdutoDTO>>(produtos);
+
+                return Ok(produtosDto);
             }
             catch (Exception)
             {
@@ -82,9 +92,11 @@ namespace APICatalogo.Controller
                 var produto = _uof.ProdutoRepository.Get(p => p.Id == id);
 
                 if (produto is null)                
-                    return NotFound("Produto não encontrado.");                
+                    return NotFound("Produto não encontrado.");
 
-                return Ok(produto);
+                var produtoDto = _mapper.Map<ProdutoDTO>(produto);
+
+                return Ok(produtoDto);
             }
             catch (Exception)
             {
@@ -104,7 +116,9 @@ namespace APICatalogo.Controller
                 if (produtoDto is null)                
                     return BadRequest();
 
-                var produtoCriado = _uof.ProdutoRepository.Create(produtoDto);
+                var produto = _mapper.Map<Produto>(produtoDto);
+
+                var produtoCriado = _uof.ProdutoRepository.Create(produto);
                 _uof.Commit();
 
                 return new CreatedAtRouteResult("ObterProduto",
@@ -124,7 +138,9 @@ namespace APICatalogo.Controller
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            _uof.ProdutoRepository.Create(produtosDto);
+            var produtos = _mapper.Map<IEnumerable<Produto>>(produtosDto);
+
+            _uof.ProdutoRepository.Create(produtos);
             _uof.Commit();
 
             return Ok(produtosDto);
@@ -136,9 +152,11 @@ namespace APICatalogo.Controller
             try
             {
                 if (id != produtoDto.Id)                
-                    return BadRequest();                
+                    return BadRequest();
 
-                _uof.ProdutoRepository.Update(produtoDto);
+                var produto = _mapper.Map<Produto>(produtoDto);
+
+                _uof.ProdutoRepository.Update(produto);
                 _uof.Commit();
 
                 return Ok(produtoDto);
@@ -158,7 +176,9 @@ namespace APICatalogo.Controller
                 _uof.ProdutoRepository.Delete(produto);
                 _uof.Commit();
 
-                return Ok(produto);
+                var produtoDto = _mapper.Map<ProdutoDTO>(produto);
+
+                return Ok(produtoDto);
             }
             catch (Exception)
             {
