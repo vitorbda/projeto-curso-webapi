@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace APICatalogo.Controller
@@ -34,6 +35,18 @@ namespace APICatalogo.Controller
                 var produtos = _uof.ProdutoRepository.GetProdutos(prodParams);
                 if (produtos is null)
                     return NotFound();
+
+                var metadata = new
+                {
+                    produtos.TotalCount,
+                    produtos.PageSize,
+                    produtos.CurrentPage,
+                    produtos.TotalPages,
+                    produtos.HasNext,
+                    produtos.HasPrevious
+                };
+
+                Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(metadata));
 
                 return Ok(_mapper.Map<IEnumerable<ProdutoDTO>>(produtos));
 

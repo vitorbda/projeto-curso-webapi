@@ -15,12 +15,11 @@ namespace APICatalogo.Repositories
             return base.Get().Where(c => c.CategoriaId == id);
         }
 
-        public IEnumerable<Produto> GetProdutos(ProdutosParameters prodParams)
+        public PagedList<Produto> GetProdutos(ProdutosParameters prodParams)
         {
-            return base.Get()
-                .OrderBy(p => p.Nome)
-                .Skip((prodParams.PageNumber - 1) * prodParams.PageSize)
-                .Take(prodParams.PageSize);
+            var produtos = base.Get().OrderBy(p => p.Id).AsQueryable();
+            var produtosPaginados = PagedList<Produto>.ToPagedList(produtos, prodParams.PageNumber, prodParams.PageSize);
+            return produtosPaginados;
         }
     }
 }
