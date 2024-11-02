@@ -17,7 +17,10 @@ namespace APICatalogo.Filters
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            var obj = RetornaObjeto(context.ActionArguments);
+            var obj = context.ActionArguments.Any()
+                ? RetornaObjeto(context.ActionArguments)
+                : "";
+
             _logger.LogInformation($"### Executando -> OnActionExecuting [{_id}]");
             _logger.LogInformation("###############");
             _logger.LogInformation($"{DateTime.Now.ToLongTimeString()}");

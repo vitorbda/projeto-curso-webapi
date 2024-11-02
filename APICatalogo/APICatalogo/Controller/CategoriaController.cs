@@ -1,6 +1,7 @@
 ﻿using APICatalogo.Context;
 using APICatalogo.Filters;
 using APICatalogo.Models;
+using APICatalogo.Repositories;
 using APICatalogo.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,13 +15,13 @@ namespace APICatalogo.Controller
     [ApiController]
     public class CategoriaController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IUnitOfWork _uof;
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
 
-        public CategoriaController(AppDbContext context, IConfiguration configuration, ILogger<CategoriaController> logger)
+        public CategoriaController(IUnitOfWork uof, IConfiguration configuration, ILogger<CategoriaController> logger)
         {
-            _context = context;
+            _uof = uof;
             _configuration = configuration;
             _logger = logger;
         }
@@ -48,16 +49,17 @@ namespace APICatalogo.Controller
         [HttpGet("produtos")]
         public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
         {
-            return _context.Categoria.Include(x => x.Produtos).AsNoTracking().ToList();
+            var categorias = _uof.CategoriaRepository.Get();
+            return Ok(categorias);
         }
 
         [HttpGet]
         [ServiceFilter(typeof(ApiLoggingFilter))]
-        public async Task<ActionResult<IEnumerable<Categoria>>> Get()
+        public ActionResult<IEnumerable<Categoria>> Get()
         {
             try
             {
-                return await _context.Categoria?.AsNoTracking().ToListAsync();
+                return Ok(_uof.CategoriaRepository.Get());
             }
             catch (Exception)
             {
@@ -70,13 +72,11 @@ namespace APICatalogo.Controller
         {
             try
             {
-                var categoria = _context.Categoria?.AsNoTracking().FirstOrDefault(x => x.Id == id);
+                var categoria = _uof.CategoriaRepository.Get(c => c.Id == id);
 
-                if (categoria is null)
-                {
-                    return NotFound("Produto não encontrado.");
-                }
-
+                if (categoria is null)                
+                    return NotFound("Categoria não encontrada.");
+                
                 return Ok(categoria);
             }
             catch (Exception)
@@ -90,13 +90,11 @@ namespace APICatalogo.Controller
         {
             try
             {
-                if (categoria is null)
-                {
-                    return BadRequest();
-                }
+                if (categoria is null)                
+                    return BadRequest();                
 
-                _context.Categoria?.Add(categoria);
-                _context.SaveChanges();
+                categoria = _uof.CategoriaRepository.Create(categoria);
+                _uof.Commit();
 
                 return new CreatedAtRouteResult("ObterCategoria",
                     new { id = categoria.Id }, categoria);
@@ -112,13 +110,11 @@ namespace APICatalogo.Controller
         {
             try
             {
-                if (id != categoria.Id)
-                {
+                if (id != categoria.Id)                
                     return BadRequest();
-                }
 
-                _context.Entry(categoria).State = EntityState.Modified;
-                _context.SaveChanges();
+                _uof.CategoriaRepository.Update(categoria);
+                _uof.Commit();
 
                 return Ok(categoria);
             }
@@ -127,6 +123,26 @@ namespace APICatalogo.Controller
                 return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um problema ao tratar a sua solicitação.");
             }
 
+        }
+
+        [HttpDelete]
+        public ActionResult<Categoria> Delete(int id) 
+        {
+            try
+            {
+                var categoria = _uof.CategoriaRepository.Get(c => c.Id == id);
+                if (categoria is null)
+                    return NotFound("Categoria não encontrada");
+
+                var categoriaDeletada = _uof.CategoriaRepository.Delete(categoria);
+                _uof.Commit();
+
+                return Ok(categoriaDeletada);
+            }
+            catch 
+            {
+                throw;
+            }            
         }
 
 
