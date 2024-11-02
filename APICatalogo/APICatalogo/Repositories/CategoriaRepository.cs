@@ -9,7 +9,5 @@ namespace APICatalogo.Repositories
         public CategoriaRepository(AppDbContext appDbContext) : base(appDbContext)
         {
         }
-
-
     }
 }

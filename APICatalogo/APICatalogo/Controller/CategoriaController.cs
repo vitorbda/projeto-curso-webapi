@@ -75,7 +75,7 @@ namespace APICatalogo.Controller
                 var categoria = _repository.Get(c => c.Id == id);
 
                 if (categoria is null)                
-                    return NotFound("Produto não encontrado.");
+                    return NotFound("Categoria não encontrada.");
                 
                 return Ok(categoria);
             }
@@ -129,6 +129,8 @@ namespace APICatalogo.Controller
             try
             {
                 var categoria = _repository.Get(c => c.Id == id);
+                if (categoria is null)
+                    return NotFound("Categoria não encontrada");
 
                 var categoriaDeletada = _repository.Delete(categoria);
 

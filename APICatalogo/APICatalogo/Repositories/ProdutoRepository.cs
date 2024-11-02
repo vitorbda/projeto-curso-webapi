@@ -11,7 +11,7 @@ namespace APICatalogo.Repositories
 
         public IEnumerable<Produto> GetProdutosPorCategoria(int id)
         {
-            return Get().Where(c => c.CategoriaId == id);
+            return base.Get().Where(c => c.CategoriaId == id);
         }
     }
 }

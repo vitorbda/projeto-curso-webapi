@@ -42,12 +42,12 @@ namespace APICatalogo.Controller
         {
             try
             {
-                var categorias = _repository.GetProdutosPorCategoria(id);
+                var produtos = _repository.GetProdutosPorCategoria(id);                
 
-                if (categorias is null)
+                if (produtos is null  || !produtos.Any())
                     return NotFound("Produtos não encontrados");
 
-                return Ok(categorias);
+                return Ok(produtos);
             }
             catch
             {
