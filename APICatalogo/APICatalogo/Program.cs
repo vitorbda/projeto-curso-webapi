@@ -5,6 +5,7 @@ using APICatalogo.Services;
 using APICatalogo.Extensions;
 using APICatalogo.Logging;
 using APICatalogo.Filters;
+using APICatalogo.DTOs.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +28,10 @@ builder.Services.AddControllers(options =>
 .AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-});
+})
+.AddNewtonsoftJson();
+
+builder.Services.AddAutoMapper(typeof(DTOMapperProfile));
 
 builder.Services.ConfigureServices();
 
