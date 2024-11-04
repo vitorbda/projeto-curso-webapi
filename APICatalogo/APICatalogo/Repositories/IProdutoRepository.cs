@@ -7,5 +7,6 @@ namespace APICatalogo.Repositories
     {
         PagedList<Produto> GetProdutos(ProdutosParameters prodParams);
         IEnumerable<Produto> GetProdutosPorCategoria(int id);
+        PagedList<Produto> GetProdutosFiltroPreco(ProdutosFiltroPreco produtosFiltroPreco);
     }
 }

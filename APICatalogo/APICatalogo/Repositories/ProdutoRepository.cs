@@ -21,5 +21,28 @@ namespace APICatalogo.Repositories
             var produtosPaginados = PagedList<Produto>.ToPagedList(produtos, prodParams.PageNumber, prodParams.PageSize);
             return produtosPaginados;
         }
+
+        public PagedList<Produto> GetProdutosFiltroPreco(ProdutosFiltroPreco produtosFiltroPreco)
+        {
+            var produtos = base.Get().AsQueryable();
+
+            if (!produtosFiltroPreco.Preco.HasValue || string.IsNullOrEmpty(produtosFiltroPreco.PrecoCriterio))
+                return null;
+
+            var criterio = produtosFiltroPreco.PrecoCriterio.ToLower();
+
+            produtos = criterio switch
+            {
+                "maior" => produtos.Where(p => p.Preco > produtosFiltroPreco.Preco).OrderBy(p => p.Id),
+                "menor" => produtos.Where(p => p.Preco < produtosFiltroPreco.Preco).OrderBy(p => p.Id),
+                "igual" => produtos.Where(p => p.Preco == produtosFiltroPreco.Preco).OrderBy(p => p.Id),
+                _ => null
+            };
+
+            var produtosFiltrados = PagedList<Produto>.ToPagedList(produtos, produtosFiltroPreco.PageNumber, produtosFiltroPreco.PageSize);
+
+            return produtosFiltrados;
+                        
+        }
     }
 }
