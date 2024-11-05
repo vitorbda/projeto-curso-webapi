@@ -2,12 +2,14 @@
 using APICatalogo.DTOs;
 using APICatalogo.Filters;
 using APICatalogo.Models;
+using APICatalogo.Pagination;
 using APICatalogo.Repositories;
 using APICatalogo.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Drawing;
 using System.Text;
 
@@ -48,6 +50,24 @@ namespace APICatalogo.Controller
         public ActionResult<string> GetSaudacaoFromServices([FromServices] IMeuServico meuServico, string nome)
         {
             return meuServico.Saudacao(nome);
+        }
+
+        [HttpGet("PaginationFilter")]
+        public ActionResult<IEnumerable<CategoriaDTO>> GetPaginationFilter([FromQuery] CategoriasFiltroNome categoriasFiltro)
+        {
+            var categorias = _uof.CategoriaRepository.GetCategoriasFiltro(categoriasFiltro);
+            if (categorias is null)
+                return NotFound();
+
+            return ObterCategoriasPagination(categorias);
+        }
+
+        [HttpGet("pagination")]
+        public ActionResult<IEnumerable<CategoriaDTO>> Get([FromQuery] CategoriasParameters parameters)
+        {
+            var categorias = _uof.CategoriaRepository.GetCategorias(parameters);
+
+            return ObterCategoriasPagination(categorias);
         }
 
         [HttpGet("produtos")]
@@ -180,6 +200,23 @@ namespace APICatalogo.Controller
                 valoresConcatenados.Append($"valor({i + 1}) = {valores[i]} \n");
 
             return valoresConcatenados.ToString();
+        }
+
+        private ActionResult<IEnumerable<CategoriaDTO>> ObterCategoriasPagination(PagedList<Categoria> categorias)
+        {
+            var metadata = new
+            {
+                categorias.TotalCount,
+                categorias.PageSize,
+                categorias.CurrentPage,
+                categorias.TotalPages,
+                categorias.HasNext,
+                categorias.HasPrevious
+            };
+
+            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            return Ok(_mapper.Map<IEnumerable<CategoriaDTO>>(categorias));
         }
     }
 }

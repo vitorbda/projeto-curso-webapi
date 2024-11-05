@@ -2,12 +2,14 @@
 using APICatalogo.DTOs;
 using APICatalogo.Filters;
 using APICatalogo.Models;
+using APICatalogo.Pagination;
 using APICatalogo.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace APICatalogo.Controller
@@ -23,6 +25,33 @@ namespace APICatalogo.Controller
         {
             _uof = unitOfWork;
             _mapper = mapper;
+        }
+
+        [HttpGet("GetProdutosPagination")]
+        public ActionResult<IEnumerable<ProdutoDTO>> GetProdutos([FromQuery] ProdutosParameters prodParams)
+        {
+            try
+            {
+                var produtos = _uof.ProdutoRepository.GetProdutos(prodParams);
+                if (produtos is null)
+                    return NotFound();
+
+                return ObterProdutosPagination(produtos);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um problema ao tratar a sua solicitação.");
+            }
+        }
+
+        [HttpGet("FilterPagePagination")]
+        public ActionResult<IEnumerable<ProdutoDTO>> GetProdutosFilterPreco([FromQuery] ProdutosFiltroPreco produtosFiltroPreco)
+        {
+            var produtos = _uof.ProdutoRepository.GetProdutosFiltroPreco(produtosFiltroPreco);
+            if (produtos is null)
+                return NotFound();
+
+            return ObterProdutosPagination(produtos);
         }
 
         [HttpPatch("{id}/UpdatePartial")]
@@ -157,7 +186,6 @@ namespace APICatalogo.Controller
             }
         }
 
-
         [HttpPost("teste")]
         [ServiceFilter(typeof(ApiLoggingFilter))]
         public ActionResult<IEnumerable<ProdutoDTO>> Post(IEnumerable<ProdutoDTO> produtosDto)
@@ -211,6 +239,23 @@ namespace APICatalogo.Controller
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um problema ao tratar a sua solicitação.");
             }
+        }
+
+        private ActionResult<IEnumerable<ProdutoDTO>> ObterProdutosPagination(PagedList<Produto> produtos)
+        {
+            var metadata = new
+            {
+                produtos.TotalCount,
+                produtos.PageSize,
+                produtos.CurrentPage,
+                produtos.TotalPages,
+                produtos.HasNext,
+                produtos.HasPrevious
+            };
+
+            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            return Ok(_mapper.Map<IEnumerable<ProdutoDTO>>(produtos));
         }
     }
 }
