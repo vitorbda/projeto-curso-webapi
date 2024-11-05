@@ -1,1 +1,3 @@
-Information: 0 = Content root path: C:\Users\joao_\Documents\projeto-curso-WEBAPI\APICatalogo\APICatalogo
+Information: 20101 = Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
+VALUES ('20241105095212_CriaTabelasIdentity', '8.0.10');
