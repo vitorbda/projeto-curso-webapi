@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using APICatalogo.Extensions;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -10,9 +11,9 @@ namespace APICatalogo.Services
     {
         public JwtSecurityToken GenerateAccessToke(IEnumerable<Claim> claims, IConfiguration _config)
         {
-            var key = _config.GetSection("JWT").GetValue<string>("SecretKey") ?? throw new InvalidOperationException("Invalid secret key");
+            var secretKey = _config["JWT:SecretKey"] ?? throw new InvalidOperationException("Invalid secret key");
 
-            var privateKey = Encoding.UTF8.GetBytes(key);
+            var privateKey = Encoding.UTF8.GetBytes(secretKey);
 
             var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(privateKey), SecurityAlgorithms.HmacSha256Signature);
 
@@ -39,7 +40,23 @@ namespace APICatalogo.Services
         }
         public ClaimsPrincipal GetPrincipalFromExpiredToken(string token, IConfiguration _config)
         {
+            var secretKey = _config["JWT:SecretKey"] ?? throw new InvalidOperationException("Invalid secret key");
 
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateAudience = false,
+                ValidateIssuer = false,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+                ValidateLifetime = false
+            };
+
+            var principal = new JwtSecurityTokenHandler().ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+
+            if (principal.NotValid(securityToken))
+                throw new SecurityTokenException("Invalid token");
+            
+            return principal;
         }
     }
 }
