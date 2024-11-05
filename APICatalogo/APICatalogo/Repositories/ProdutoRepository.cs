@@ -1,6 +1,7 @@
 ﻿using APICatalogo.Context;
 using APICatalogo.Models;
 using APICatalogo.Pagination;
+using X.PagedList;
 
 namespace APICatalogo.Repositories
 {
@@ -17,16 +18,18 @@ namespace APICatalogo.Repositories
             return produtos.Where(c => c.CategoriaId == id);
         }
 
-        public async Task<PagedList<Produto>> GetProdutosAsync(ProdutosParameters prodParams)
+        public async Task<IPagedList<Produto>> GetProdutosAsync(ProdutosParameters prodParams)
         {
             var produtos = await base.GetAsync();
 
             var produtosOrdenados = produtos.OrderBy(p => p.Id).AsQueryable();
 
-            return PagedList<Produto>.ToPagedList(produtosOrdenados, prodParams.PageNumber, prodParams.PageSize);
+            //PagedList<Produto>.ToPagedList(produtosOrdenados, prodParams.PageNumber, prodParams.PageSize);
+
+            return await produtos.ToPagedListAsync(prodParams.PageNumber, prodParams.PageSize);
         }
 
-        public async Task<PagedList<Produto>> GetProdutosFiltroPrecoAsync(ProdutosFiltroPreco produtosFiltroPreco)
+        public async Task<IPagedList<Produto>> GetProdutosFiltroPrecoAsync(ProdutosFiltroPreco produtosFiltroPreco)
         {
             var produtos = await base.GetAsync();
 
@@ -43,10 +46,10 @@ namespace APICatalogo.Repositories
                 _ => null
             };
 
-            var produtosFiltrados = PagedList<Produto>.ToPagedList(produtos.AsQueryable(), produtosFiltroPreco.PageNumber, produtosFiltroPreco.PageSize);
+            //var produtosFiltrados = PagedList<Produto>.ToPagedList(produtos.AsQueryable(), produtosFiltroPreco.PageNumber, produtosFiltroPreco.PageSize);
 
-            return produtosFiltrados;
-                        
+            return await produtos.ToPagedListAsync(produtosFiltroPreco.PageNumber, produtosFiltroPreco.PageSize);
+                         
         }
     }
 }
