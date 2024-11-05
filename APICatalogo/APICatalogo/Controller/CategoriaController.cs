@@ -52,24 +52,22 @@ namespace APICatalogo.Controller
             return meuServico.Saudacao(nome);
         }
 
+        [HttpGet("PaginationFilter")]
+        public ActionResult<IEnumerable<CategoriaDTO>> GetPaginationFilter([FromQuery] CategoriasFiltroNome categoriasFiltro)
+        {
+            var categorias = _uof.CategoriaRepository.GetCategoriasFiltro(categoriasFiltro);
+            if (categorias is null)
+                return NotFound();
+
+            return ObterCategoriasPagination(categorias);
+        }
+
         [HttpGet("pagination")]
         public ActionResult<IEnumerable<CategoriaDTO>> Get([FromQuery] CategoriasParameters parameters)
         {
             var categorias = _uof.CategoriaRepository.GetCategorias(parameters);
 
-            var metadata = new
-            {
-                categorias.TotalCount,
-                categorias.PageSize,
-                categorias.CurrentPage,
-                categorias.TotalPages,
-                categorias.HasNext,
-                categorias.HasPrevious
-            };
-
-            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(metadata));
-
-            return Ok(_mapper.Map<IEnumerable<CategoriaDTO>>(categorias));
+            return ObterCategoriasPagination(categorias);
         }
 
         [HttpGet("produtos")]
@@ -202,6 +200,23 @@ namespace APICatalogo.Controller
                 valoresConcatenados.Append($"valor({i + 1}) = {valores[i]} \n");
 
             return valoresConcatenados.ToString();
+        }
+
+        private ActionResult<IEnumerable<CategoriaDTO>> ObterCategoriasPagination(PagedList<Categoria> categorias)
+        {
+            var metadata = new
+            {
+                categorias.TotalCount,
+                categorias.PageSize,
+                categorias.CurrentPage,
+                categorias.TotalPages,
+                categorias.HasNext,
+                categorias.HasPrevious
+            };
+
+            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            return Ok(_mapper.Map<IEnumerable<CategoriaDTO>>(categorias));
         }
     }
 }
