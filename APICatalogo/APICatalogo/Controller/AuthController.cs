@@ -67,5 +67,29 @@ namespace APICatalogo.Controller
                 Expiration = token.ValidTo
             });
         }
+
+        [HttpPost("register")]
+        public async Task<ActionResult> Register(RegisterModel model)
+        {
+            var userExists = await _userManager.FindByNameAsync(model.UserName);
+
+            if (userExists is not null)
+                return BadRequest("Usuário já existe!");
+
+            ApplicationUser user = new()
+            {
+                Email = model.Email,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = model.UserName
+            };
+
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            if (!result.Succeeded)
+                return StatusCode(500, "Ocorreu um erro ao criar o usuário");
+
+            return Ok("Usuário criado com sucesso");
+        }
+
     }
 }
