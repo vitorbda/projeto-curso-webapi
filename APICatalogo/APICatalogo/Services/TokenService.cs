@@ -9,7 +9,7 @@ namespace APICatalogo.Services
 {
     public class TokenService : ITokenService
     {
-        public JwtSecurityToken GenerateAccessToke(IEnumerable<Claim> claims, IConfiguration _config)
+        public JwtSecurityToken GenerateAccessToken(IEnumerable<Claim> claims, IConfiguration _config)
         {
             var secretKey = _config["JWT:SecretKey"] ?? throw new InvalidOperationException("Invalid secret key");
 

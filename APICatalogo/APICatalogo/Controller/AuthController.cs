@@ -74,7 +74,7 @@ namespace APICatalogo.Controller
             var userExists = await _userManager.FindByNameAsync(model.UserName);
 
             if (userExists is not null)
-                return BadRequest("Usuário já existe!");
+                return StatusCode(409, "Usuário já existe!");
 
             ApplicationUser user = new()
             {
@@ -91,5 +91,41 @@ namespace APICatalogo.Controller
             return Ok("Usuário criado com sucesso");
         }
 
+        [HttpPost("refresh-token")]
+        public async Task<ActionResult> RefreshToken(TokenModel model)
+        {
+            if (model is null)
+                return BadRequest();
+
+            var accessToken = model.AcessToken ?? throw new ArgumentNullException(nameof(model));
+
+            var refreshToken = model.RefreshToken ?? throw new ArgumentNullException(nameof(model));
+
+            var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken, _config);
+
+            if (principal is null)
+                return BadRequest("Ivalid acess token/refresh token");
+
+            var userName = principal.Identity.Name;
+
+            var user = await _userManager.FindByNameAsync(userName);
+
+            if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+                return BadRequest("Ivalid acess token/refresh token");
+
+            var newAcessToken = _tokenService.GenerateAccessToken(principal.Claims.ToList(), _config);
+
+            var newRefreshToken = _tokenService.GenerateRefreshToken();
+
+            user.RefreshToken = newRefreshToken;
+
+            await _userManager.UpdateAsync(user);
+
+            return Ok(new
+            {
+                accessToken = new JwtSecurityTokenHandler().WriteToken(newAcessToken),
+                refreshToken = newRefreshToken
+            });
+        }
     }
 }
