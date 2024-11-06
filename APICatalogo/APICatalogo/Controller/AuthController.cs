@@ -89,7 +89,7 @@ namespace APICatalogo.Controller
             if (!result.Succeeded)
                 return StatusCode(500, "Ocorreu um erro ao criar o usuário");
 
-            return Ok("Usuário criado com sucesso");
+            return Ok(await Login(new LoginModel { UserName = model.UserName, Password = model.Password }));
         }
 
         [HttpPost("refresh-token")]
