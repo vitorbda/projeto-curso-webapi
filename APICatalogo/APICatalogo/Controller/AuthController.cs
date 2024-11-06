@@ -1,4 +1,5 @@
 ﻿using APICatalogo.DTOs;
+using APICatalogo.Extensions;
 using APICatalogo.Models;
 using APICatalogo.Services;
 using Microsoft.AspNetCore.Http;
@@ -49,7 +50,7 @@ namespace APICatalogo.Controller
             foreach (var role in userRoles)
                 authClaims.Add(new Claim(ClaimTypes.Role, role));
 
-            var token = _tokenService.GenerateAccessToke(authClaims, _config);
+            var token = _tokenService.GenerateAccessToken(authClaims, _config);
 
             var refreshToken = _tokenService.GenerateRefreshToken();
 
@@ -126,6 +127,18 @@ namespace APICatalogo.Controller
                 accessToken = new JwtSecurityTokenHandler().WriteToken(newAcessToken),
                 refreshToken = newRefreshToken
             });
+        }
+
+        [HttpPost("revoke/{username}")]
+        public async Task<ActionResult> Remove(string username)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+
+            if (user is null) return BadRequest();
+
+            await user.ClearRefreshToken(_userManager);
+
+            return NoContent();
         }
     }
 }
