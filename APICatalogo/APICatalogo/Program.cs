@@ -77,13 +77,12 @@ builder.Services.AddControllers(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(
+    options.AddPolicy("OrigensComAcessoPermitido",
         policy =>
         {
-            policy.WithOrigins("http://www.apirequest.io")
+            policy.WithOrigins("https://localhost:7233")
             .WithMethods("GET", "POST")
-            .AllowAnyHeader()
-            .AllowCredentials();
+            .AllowAnyHeader();
         });
 });
 

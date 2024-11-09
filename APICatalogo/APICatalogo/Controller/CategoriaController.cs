@@ -7,6 +7,7 @@ using APICatalogo.Repositories;
 using APICatalogo.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ namespace APICatalogo.Controller
 {
     [Route("[controller]")]
     [ApiController]
+    [EnableCors("OrigensComAcessoPermitido")]
     public class CategoriaController : ControllerBase
     {
         private readonly IUnitOfWork _uof;
@@ -108,6 +110,7 @@ namespace APICatalogo.Controller
             }                        
         }
 
+        [DisableCors]
         [HttpGet("{id:int}", Name = "ObterCategoria")]
         public async Task<ActionResult<CategoriaDTO>> Get(int id) 
         {
