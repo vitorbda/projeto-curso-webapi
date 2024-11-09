@@ -33,6 +33,28 @@ namespace APICatalogo.Controller
             _logger = logger;
         }
 
+        [HttpPost("AddUserToRole")]
+        public async Task<ActionResult> AddUserToRole(string email, string roleName)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user is null)
+                return NotFound(new { error = "Unable to find user" });
+
+            var result = await _userManager.AddToRoleAsync(user, roleName);
+
+            if (result.Succeeded)
+            {
+                _logger.LogInformation(1, $"User {user.Email} added to the {roleName} role");
+                return Ok(new Response { Status = "Success", Message = $"User {user.Email} added to the {roleName} role"});
+            }
+            else
+            {
+                _logger.LogInformation(1, $"Error: Unable to add user {user.Email} to the {roleName} role");
+                return BadRequest(new Response { Status = "Error", Message = $"Error: Unable to add user {user.Email} to the {roleName} role" });
+            }
+        }
+
         [HttpPost("CreateRole")]
         public async Task<ActionResult> CreateRole(string roleName)
         {
