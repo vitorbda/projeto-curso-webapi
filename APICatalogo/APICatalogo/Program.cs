@@ -95,6 +95,25 @@ builder.Services.AddAuthentication(option =>
     };
 });
 
+builder.Services.AddAuthorization(option =>
+{
+    option.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+
+    option.AddPolicy("SuperAdminOnly", policy => 
+        policy.RequireRole("Admin")
+        .RequireClaim("id", "joao"));
+
+    option.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
+
+    option.AddPolicy("ExclusivePolicyOnly", policy =>
+    {
+        policy.RequireAssertion(context => context.User.HasClaim(claim =>        
+            claim.Type == "id" && claim.Value == "joao")
+            || context.User.IsInRole("SuperAdmin")
+        );
+    });
+});
+
 builder.Services.AddAutoMapper(typeof(DTOMapperProfile));
 
 builder.Services.ConfigureServices();
