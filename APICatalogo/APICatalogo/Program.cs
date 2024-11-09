@@ -73,6 +73,17 @@ builder.Services.AddControllers(options =>
 })
 .AddNewtonsoftJson();
 
+var OrigensComAcessoPermitido = "_origensComAcessoPermitido";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(OrigensComAcessoPermitido,
+        policy =>
+        {
+            policy.WithOrigins("http://www.apirequest.io");
+        });
+});
+
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(option =>
 {
@@ -134,6 +145,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(OrigensComAcessoPermitido);
 
 app.UseAuthorization();
 
