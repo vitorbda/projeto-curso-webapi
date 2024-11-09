@@ -15,6 +15,7 @@ namespace APICatalogo.Extensions
             services.AddScoped<IProdutoRepository, ProdutoRepository>();
             services.AddScoped<IRepository<Type>, Repository<Type>>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ITokenService, TokenService>();
 
             return services;
         }

@@ -1,0 +1,3 @@
+Information: 20101 = Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
+VALUES ('20241105095212_CriaTabelasIdentity', '8.0.10');
