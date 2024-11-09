@@ -18,16 +18,43 @@ namespace APICatalogo.Controller
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _config;
+        private readonly ILogger _logger;
 
         public AuthController(ITokenService tokenService, 
             UserManager<ApplicationUser> userManager, 
             RoleManager<IdentityRole> roleManager, 
-            IConfiguration config)
+            IConfiguration config,
+            ILogger<AuthController> logger)
         {
             _tokenService = tokenService;
             _userManager = userManager;
             _roleManager = roleManager;
             _config = config;
+            _logger = logger;
+        }
+
+        [HttpPost("CreateRole")]
+        public async Task<ActionResult> CreateRole(string roleName)
+        {
+            var roleExist = await _roleManager.RoleExistsAsync(roleName);
+
+            if (!roleExist)
+            {
+                var roleResult = await _roleManager.CreateAsync(new IdentityRole(roleName));
+
+                if (roleResult.Succeeded)
+                {
+                    _logger.LogInformation(1, "Roles Added");
+                    return Ok(new Response { Status = "Success", Message = $"Role {roleName} added successfully" });
+                }
+                else
+                {
+                    _logger.LogInformation(2, "Error");
+                    return BadRequest(new Response { Status = "Error", Message = $"Issue adding the new {roleName} role" });
+                }
+            }
+
+            return BadRequest(new Response { Status = "Error", Message = $"Issue adding the new {roleName} role" });
         }
 
         [HttpPost("login")]
