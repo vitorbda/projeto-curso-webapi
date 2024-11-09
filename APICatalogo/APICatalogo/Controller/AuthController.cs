@@ -2,6 +2,7 @@
 using APICatalogo.Extensions;
 using APICatalogo.Models;
 using APICatalogo.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -56,6 +57,7 @@ namespace APICatalogo.Controller
         }
 
         [HttpPost("CreateRole")]
+        [Authorize("SuperAdminOnly")]
         public async Task<ActionResult> CreateRole(string roleName)
         {
             var roleExist = await _roleManager.RoleExistsAsync(roleName);
@@ -180,6 +182,7 @@ namespace APICatalogo.Controller
         }
 
         [HttpPost("revoke/{username}")]
+        [Authorize("ExclusiveOnly")]
         public async Task<ActionResult> Remove(string username)
         {
             var user = await _userManager.FindByNameAsync(username);

@@ -123,7 +123,7 @@ namespace APICatalogo.Controller
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize("UserOnly")]
         public async Task<ActionResult<IEnumerable<ProdutoDTO>>> Get()
         {
             try

@@ -173,6 +173,7 @@ namespace APICatalogo.Controller
         }
 
         [HttpDelete]
+        [Authorize("AdminOnly")]
         public async Task<ActionResult<CategoriaDTO>> Delete(int id) 
         {
             try
