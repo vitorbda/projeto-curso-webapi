@@ -12,6 +12,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using APICatalogo.Models;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
+using APICatalogo.RateLimitOptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -73,6 +76,19 @@ builder.Services.AddControllers(options =>
 })
 .AddNewtonsoftJson();
 
+//var OrigensComAcessoPermitido = "_origensComAcessoPermitido";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("OrigensComAcessoPermitido",
+        policy =>
+        {
+            policy.WithOrigins("https://localhost:7233")
+            .WithMethods("GET", "POST")
+            .AllowAnyHeader();
+        });
+});
+
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(option =>
 {
@@ -94,6 +110,40 @@ builder.Services.AddAuthentication(option =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
     };
 });
+
+var myOptions = new MyRateLimitOptions();
+
+builder.Configuration.GetSection(MyRateLimitOptions.MyRateLimit).Bind(myOptions);
+
+builder.Services.AddRateLimiter(rateLimiterOptions =>
+{
+    rateLimiterOptions.AddFixedWindowLimiter("fixedwindow", options =>
+    {
+        options.PermitLimit = myOptions.PermitLimit;//1;
+        options.Window = TimeSpan.FromSeconds(myOptions.Window);
+        options.QueueLimit = myOptions.QueueLimit;//0;
+        options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+    });
+    rateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+});
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+    
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.User.Identity.Name ?? httpContext.Request.Headers.Host.ToString(),
+            factory: partition => new FixedWindowRateLimiterOptions
+            {
+                AutoReplenishment = true,
+                PermitLimit = 5,
+                QueueLimit = 0,
+                Window = TimeSpan.FromSeconds(10)
+            }));
+});
+
 
 builder.Services.AddAuthorization(option =>
 {
@@ -134,6 +184,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseRateLimiter();
+
+app.UseCors();
 
 app.UseAuthorization();
 

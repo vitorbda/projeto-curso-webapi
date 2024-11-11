@@ -1,5 +1,4 @@
-﻿using APICatalogo.Context;
-using APICatalogo.DTOs;
+﻿using APICatalogo.DTOs;
 using APICatalogo.Filters;
 using APICatalogo.Models;
 using APICatalogo.Pagination;
@@ -7,11 +6,10 @@ using APICatalogo.Repositories;
 using APICatalogo.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.RateLimiting;
 using Newtonsoft.Json;
-using System.Drawing;
 using System.Text;
 using X.PagedList;
 
@@ -19,6 +17,8 @@ namespace APICatalogo.Controller
 {
     [Route("[controller]")]
     [ApiController]
+    [EnableCors("OrigensComAcessoPermitido")]
+    [EnableRateLimiting("fixedwindow")]
     public class CategoriaController : ControllerBase
     {
         private readonly IUnitOfWork _uof;
@@ -92,6 +92,7 @@ namespace APICatalogo.Controller
 
         [HttpGet]
         [ServiceFilter(typeof(ApiLoggingFilter))]
+        [DisableRateLimiting]
         public async Task<ActionResult<IEnumerable<CategoriaDTO>>> Get()
         {
             try
@@ -108,6 +109,7 @@ namespace APICatalogo.Controller
             }                        
         }
 
+        [DisableCors]
         [HttpGet("{id:int}", Name = "ObterCategoria")]
         public async Task<ActionResult<CategoriaDTO>> Get(int id) 
         {
