@@ -257,3 +257,7 @@ C:\Users\joao_\Documents\projeto-curso-WEBAPI\APICatalogo\APICatalogo\bin\Debug\
 C:\Users\joao_\Documents\projeto-curso-WEBAPI\APICatalogo\APICatalogo\bin\Debug\net8.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
 C:\Users\joao_\Documents\projeto-curso-WEBAPI\APICatalogo\APICatalogo\bin\Debug\net8.0\Microsoft.Extensions.Identity.Core.dll
 C:\Users\joao_\Documents\projeto-curso-WEBAPI\APICatalogo\APICatalogo\bin\Debug\net8.0\Microsoft.Extensions.Identity.Stores.dll
+C:\Users\joao_\Documents\projeto-curso-WEBAPI\APICatalogo\APICatalogo\bin\Debug\net8.0\Asp.Versioning.Abstractions.dll
+C:\Users\joao_\Documents\projeto-curso-WEBAPI\APICatalogo\APICatalogo\bin\Debug\net8.0\Asp.Versioning.Http.dll
+C:\Users\joao_\Documents\projeto-curso-WEBAPI\APICatalogo\APICatalogo\bin\Debug\net8.0\Asp.Versioning.Mvc.dll
+C:\Users\joao_\Documents\projeto-curso-WEBAPI\APICatalogo\APICatalogo\bin\Debug\net8.0\Asp.Versioning.Mvc.ApiExplorer.dll

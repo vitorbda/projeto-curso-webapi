@@ -15,6 +15,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 using APICatalogo.RateLimitOptions;
+using Asp.Versioning;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -142,6 +143,18 @@ builder.Services.AddRateLimiter(options =>
                 QueueLimit = 0,
                 Window = TimeSpan.FromSeconds(10)
             }));
+});
+
+builder.Services.AddApiVersioning(o =>
+{
+    o.DefaultApiVersion = new ApiVersion(1, 0);
+    o.AssumeDefaultVersionWhenUnspecified = true;
+    o.ReportApiVersions = true;
+    //o.ApiVersionReader = ApiVersionReader.Combine(new QueryStringApiVersionReader());
+}).AddApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
 });
 
 
