@@ -14,6 +14,7 @@ using APICatalogo.Models;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
+using APICatalogo.RateLimitOptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -110,15 +111,18 @@ builder.Services.AddAuthentication(option =>
     };
 });
 
+var myOptions = new MyRateLimitOptions();
+
+builder.Configuration.GetSection(MyRateLimitOptions.MyRateLimit).Bind(myOptions);
+
 builder.Services.AddRateLimiter(rateLimiterOptions =>
 {
     rateLimiterOptions.AddFixedWindowLimiter("fixedwindow", options =>
     {
-        options.PermitLimit = 1;
-        options.Window = TimeSpan.FromSeconds(5);
-        options.QueueLimit = 0;
-        options.QueueLimit = 2;
-        options.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
+        options.PermitLimit = myOptions.PermitLimit;//1;
+        options.Window = TimeSpan.FromSeconds(myOptions.Window);
+        options.QueueLimit = myOptions.QueueLimit;//0;
+        options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
     });
     rateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 });

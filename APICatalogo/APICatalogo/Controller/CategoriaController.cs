@@ -1,5 +1,4 @@
-﻿using APICatalogo.Context;
-using APICatalogo.DTOs;
+﻿using APICatalogo.DTOs;
 using APICatalogo.Filters;
 using APICatalogo.Models;
 using APICatalogo.Pagination;
@@ -8,12 +7,9 @@ using APICatalogo.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using System.Drawing;
 using System.Text;
 using X.PagedList;
 
@@ -22,7 +18,7 @@ namespace APICatalogo.Controller
     [Route("[controller]")]
     [ApiController]
     [EnableCors("OrigensComAcessoPermitido")]
-    //[EnableRateLimiting("fixedwindow")]
+    [EnableRateLimiting("fixedwindow")]
     public class CategoriaController : ControllerBase
     {
         private readonly IUnitOfWork _uof;
