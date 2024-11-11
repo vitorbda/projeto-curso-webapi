@@ -116,6 +116,8 @@ builder.Services.AddRateLimiter(rateLimiterOptions =>
         options.PermitLimit = 1;
         options.Window = TimeSpan.FromSeconds(5);
         options.QueueLimit = 0;
+        options.QueueLimit = 2;
+        options.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
     });
     rateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 });
