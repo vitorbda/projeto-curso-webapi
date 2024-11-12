@@ -91,6 +91,10 @@ namespace APICatalogo.Controller
             }            
         }
 
+        /// <summary>
+        /// Obtem uma lista de objeto Categoria
+        /// </summary>
+        /// <returns>Uma lista de objeto Categoria</returns>
         [HttpGet]
         [ServiceFilter(typeof(ApiLoggingFilter))]
         [DisableRateLimiting]
@@ -110,6 +114,11 @@ namespace APICatalogo.Controller
             }                        
         }
 
+        /// <summary>
+        /// Obtem uma categoria pelo seu Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Objetos Categoria</returns>
         [DisableCors]
         [HttpGet("{id:int}", Name = "ObterCategoria")]
         public async Task<ActionResult<CategoriaDTO>> Get(int id) 
@@ -131,6 +140,20 @@ namespace APICatalogo.Controller
             }
         }
 
+        /// <summary>
+        /// Inclui uma nova categoria
+        /// </summary>
+        /// <remarks>
+        /// Exemplo de request:
+        ///     POST api/categorias {
+        ///         "id": 1,
+        ///         "nome": "categoria1",
+        ///         "imagemUrl": "teste.jpg"
+        ///     }
+        /// </remarks>
+        /// <param name="categoriaDto">objeto Categoria</param>
+        /// <returns>O objeto Categoria incluído</returns>
+        /// <remarks>Retorna um objeto Categoria incluído</remarks>
         [HttpPost]
         public async Task<ActionResult<CategoriaDTO>> Post(CategoriaDTO categoriaDto)
         {

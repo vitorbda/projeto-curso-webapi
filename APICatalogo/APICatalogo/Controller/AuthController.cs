@@ -82,6 +82,12 @@ namespace APICatalogo.Controller
             return BadRequest(new Response { Status = "Error", Message = $"Issue adding the new {roleName} role" });
         }
 
+        /// <summary>
+        /// Verifica as credenciais do usuário
+        /// </summary>
+        /// <param name="loginModel">Um objeto do tipo UsuarioDTO</param>
+        /// <returns>Status 200 e o token para o cliente</returns>
+        /// <remarks>Retorna o status 200 e o token</remarks>
         [HttpPost("login")]
         public async Task<ActionResult> Login(LoginModel loginModel)
         {
