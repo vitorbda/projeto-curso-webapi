@@ -181,8 +181,8 @@ namespace APICatalogo.Controller
             }
         }
 
-        #pragma warning disable CS1591
         [HttpPut("{id:int}")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         public async Task<ActionResult<CategoriaDTO>> Put(int id, CategoriaDTO categoriaDto)
         {
             try
@@ -203,7 +203,6 @@ namespace APICatalogo.Controller
             }
 
         }
-        #pragma warning restore CS1591
 
         [HttpDelete]
         [Authorize("AdminOnly")]

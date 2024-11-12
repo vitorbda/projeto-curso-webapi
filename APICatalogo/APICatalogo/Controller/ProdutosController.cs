@@ -18,6 +18,7 @@ namespace APICatalogo.Controller
 {
     [Route("[controller]")]
     [ApiController]
+    [ApiConventionType(typeof(DefaultApiConventions))]
     //[ApiExplorerSettings(IgnoreApi = true)]
     public class ProdutosController : ControllerBase
     {
