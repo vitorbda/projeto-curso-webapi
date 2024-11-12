@@ -1,8 +1,25 @@
+# Ignore os diretórios bin e obj para qualquer subprojeto
+**/bin/
+**/obj/
+
+**/bin/Debug/
+**/obj/Debug/
+
+**/bin/Debug/net8.0/
+**/obj/Debug/net8.0/
+
+# Ignore arquivos gerados por Visual Studio
 .vs/
-/APICatalogo/APICatalogo/obj/Debug/net8.0/APICatalogo.AssemblyInfoInputs.cache
-/APICatalogo/APICatalogo/obj/Debug/net8.0/APICatalogo.AssemblyInfo.cs
-/APICatalogo/Data/obj/Debug/net8.0/Data.AssemblyInfo.cs
-/APICatalogo/Data/obj/Debug/net8.0/Data.AssemblyInfoInputs.cache
-/APICatalogo/Data/obj/Debug/net8.0/Data.csproj.AssemblyReference.cache
-/APICatalogo/APICatalogo/obj/
-/APICatalogo/APICatalogo/bin/
+
+# Ignore pastas de pacotes NuGet (se houver)
+**/packages/
+
+# Outros arquivos de build temporários do Visual Studio
+*.user
+*.rsuser
+*.suo
+*.sln.docstates
+
+# Outros caches que não são úteis no Git
+.DS_Store
+Thumbs.db

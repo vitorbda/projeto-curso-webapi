@@ -141,7 +141,8 @@ namespace APICatalogo.Controller
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um problema ao tratar a sua solicitação.");
+                return BadRequest();
+                //return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um problema ao tratar a sua solicitação.");
             }
         }
 
@@ -155,6 +156,9 @@ namespace APICatalogo.Controller
         {
             try
             {
+                if (id <= 0)
+                    return BadRequest("Id de produto inválido");
+
                 var produto = await _uof.ProdutoRepository.GetAsync(p => p.Id == id);
 
                 if (produto is null)                
