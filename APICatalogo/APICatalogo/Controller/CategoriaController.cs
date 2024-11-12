@@ -19,6 +19,7 @@ namespace APICatalogo.Controller
     [ApiController]
     [EnableCors("OrigensComAcessoPermitido")]
     [EnableRateLimiting("fixedwindow")]
+    [Produces("application/json")]
     //[ApiExplorerSettings(IgnoreApi = true)]
     public class CategoriaController : ControllerBase
     {
@@ -121,6 +122,8 @@ namespace APICatalogo.Controller
         /// <returns>Objetos Categoria</returns>
         [DisableCors]
         [HttpGet("{id:int}", Name = "ObterCategoria")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<CategoriaDTO>> Get(int id) 
         {
             try
@@ -155,6 +158,8 @@ namespace APICatalogo.Controller
         /// <returns>O objeto Categoria incluído</returns>
         /// <remarks>Retorna um objeto Categoria incluído</remarks>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<CategoriaDTO>> Post(CategoriaDTO categoriaDto)
         {
             try
@@ -176,6 +181,7 @@ namespace APICatalogo.Controller
             }
         }
 
+        #pragma warning disable CS1591
         [HttpPut("{id:int}")]
         public async Task<ActionResult<CategoriaDTO>> Put(int id, CategoriaDTO categoriaDto)
         {
@@ -197,6 +203,7 @@ namespace APICatalogo.Controller
             }
 
         }
+        #pragma warning restore CS1591
 
         [HttpDelete]
         [Authorize("AdminOnly")]
