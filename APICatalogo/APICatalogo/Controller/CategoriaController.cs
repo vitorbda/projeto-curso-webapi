@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Newtonsoft.Json;
 using System.Text;
 using X.PagedList;
+using Microsoft.AspNetCore.Http;
 
 namespace APICatalogo.Controller
 {
@@ -99,6 +100,9 @@ namespace APICatalogo.Controller
         [HttpGet]
         [ServiceFilter(typeof(ApiLoggingFilter))]
         [DisableRateLimiting]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        [ProducesDefaultResponseType]
         public async Task<ActionResult<IEnumerable<CategoriaDTO>>> Get()
         {
             try
@@ -206,6 +210,9 @@ namespace APICatalogo.Controller
 
         [HttpDelete]
         [Authorize("AdminOnly")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
         public async Task<ActionResult<CategoriaDTO>> Delete(int id) 
         {
             try
