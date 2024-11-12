@@ -18,7 +18,7 @@ namespace ApiCatalogoxUnitTests.UnitTests
         public async Task GetProdutoById_Return_OkResult()
         {
             //Arrange
-            var prodId = 2;
+            var prodId = 7;
 
             //Act
             var data = await _controller.Get(prodId);
