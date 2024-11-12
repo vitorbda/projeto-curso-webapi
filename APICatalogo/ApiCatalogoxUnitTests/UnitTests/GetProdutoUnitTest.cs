@@ -1,4 +1,5 @@
 ﻿using APICatalogo.Controller;
+using APICatalogo.DTOs;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,6 +30,46 @@ namespace ApiCatalogoxUnitTests.UnitTests
             //Assert (fluentassertions)
             data.Result.Should().BeOfType<OkObjectResult>()
                 .Which.StatusCode.Should().Be(200);
+        }
+
+        [Fact]
+        public async Task GetProdutoById_Return_NotFound()
+        {
+            //Arrange
+            var produtoId = 99999;
+
+            //Action
+            var data = await _controller.Get(produtoId);
+
+            //Assert
+            data.Result.Should().BeOfType<NotFoundObjectResult>()
+                .Which.StatusCode.Should().Be(404);
+        }
+
+        [Fact]
+        public async Task GetProdutoById_Return_BadRequest()
+        {
+            //Arrange
+            var produtoId = -1;
+
+            //Action
+            var data = await _controller.Get(produtoId);
+
+            //Assert
+            data.Result.Should().BeOfType<BadRequestObjectResult>()
+                .Which.StatusCode.Should().Be(400);
+        }
+
+        [Fact]
+        public async Task GetProdutos_Return_ListOfProdutoDTO()
+        {
+            //Action
+            var data = await _controller.Get();
+
+            //Assert
+            data.Result.Should().BeOfType<OkObjectResult>()
+                .Which.Value.Should().BeAssignableTo<IEnumerable<ProdutoDTO>>()
+                .And.NotBeNull();
         }
     }
 }
