@@ -19,7 +19,7 @@ namespace APICatalogo.Controller
     [ApiController]
     [EnableCors("OrigensComAcessoPermitido")]
     [EnableRateLimiting("fixedwindow")]
-    [ApiExplorerSettings(IgnoreApi = true)]
+    //[ApiExplorerSettings(IgnoreApi = true)]
     public class CategoriaController : ControllerBase
     {
         private readonly IUnitOfWork _uof;

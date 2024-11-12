@@ -33,7 +33,25 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen( c=>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "apicatalogo", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "APICatalogo",
+        Version = "v1",
+        Description = "Catálogo de Produtos e Categorias",
+        TermsOfService = new Uri("https://macoratti.net/terms"),
+        Contact = new OpenApiContact
+        {
+            Name = "João Vitor",
+            Email = "bdandrade.joaovitor@gmail.com",
+            Url = new Uri("https://macoratti.net")
+        },
+        License = new OpenApiLicense
+        {
+            Name = "Usar sobre LICX",
+            Url = new Uri("https://macoratti.net/license")
+        }
+
+    });
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
     {
