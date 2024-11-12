@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 using APICatalogo.RateLimitOptions;
 using Asp.Versioning;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,9 +32,30 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSwaggerGen( c=>
+builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "apicatalogo", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "APICatalogo",
+        Version = "v1",
+        Description = "Catálogo de Produtos e Categorias",
+        TermsOfService = new Uri("https://macoratti.net/terms"),
+        Contact = new OpenApiContact
+        {
+            Name = "João Vitor",
+            Email = "bdandrade.joaovitor@gmail.com",
+            Url = new Uri("https://macoratti.net")
+        },
+        License = new OpenApiLicense
+        {
+            Name = "Usar sobre LICX",
+            Url = new Uri("https://macoratti.net/license")
+        }
+
+    });
+
+    var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileName));
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
     {

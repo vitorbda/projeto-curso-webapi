@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Newtonsoft.Json;
 using System.Text;
 using X.PagedList;
+using Microsoft.AspNetCore.Http;
 
 namespace APICatalogo.Controller
 {
@@ -19,7 +20,8 @@ namespace APICatalogo.Controller
     [ApiController]
     [EnableCors("OrigensComAcessoPermitido")]
     [EnableRateLimiting("fixedwindow")]
-    [ApiExplorerSettings(IgnoreApi = true)]
+    [Produces("application/json")]
+    //[ApiExplorerSettings(IgnoreApi = true)]
     public class CategoriaController : ControllerBase
     {
         private readonly IUnitOfWork _uof;
@@ -91,9 +93,16 @@ namespace APICatalogo.Controller
             }            
         }
 
+        /// <summary>
+        /// Obtem uma lista de objeto Categoria
+        /// </summary>
+        /// <returns>Uma lista de objeto Categoria</returns>
         [HttpGet]
         [ServiceFilter(typeof(ApiLoggingFilter))]
         [DisableRateLimiting]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        [ProducesDefaultResponseType]
         public async Task<ActionResult<IEnumerable<CategoriaDTO>>> Get()
         {
             try
@@ -110,8 +119,15 @@ namespace APICatalogo.Controller
             }                        
         }
 
+        /// <summary>
+        /// Obtem uma categoria pelo seu Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Objetos Categoria</returns>
         [DisableCors]
         [HttpGet("{id:int}", Name = "ObterCategoria")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<CategoriaDTO>> Get(int id) 
         {
             try
@@ -131,7 +147,23 @@ namespace APICatalogo.Controller
             }
         }
 
+        /// <summary>
+        /// Inclui uma nova categoria
+        /// </summary>
+        /// <remarks>
+        /// Exemplo de request:
+        ///     POST api/categorias {
+        ///         "id": 1,
+        ///         "nome": "categoria1",
+        ///         "imagemUrl": "teste.jpg"
+        ///     }
+        /// </remarks>
+        /// <param name="categoriaDto">objeto Categoria</param>
+        /// <returns>O objeto Categoria incluído</returns>
+        /// <remarks>Retorna um objeto Categoria incluído</remarks>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<CategoriaDTO>> Post(CategoriaDTO categoriaDto)
         {
             try
@@ -154,6 +186,7 @@ namespace APICatalogo.Controller
         }
 
         [HttpPut("{id:int}")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         public async Task<ActionResult<CategoriaDTO>> Put(int id, CategoriaDTO categoriaDto)
         {
             try
@@ -177,6 +210,9 @@ namespace APICatalogo.Controller
 
         [HttpDelete]
         [Authorize("AdminOnly")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
         public async Task<ActionResult<CategoriaDTO>> Delete(int id) 
         {
             try

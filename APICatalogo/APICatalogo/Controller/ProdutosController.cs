@@ -18,7 +18,8 @@ namespace APICatalogo.Controller
 {
     [Route("[controller]")]
     [ApiController]
-    [ApiExplorerSettings(IgnoreApi = true)]
+    [ApiConventionType(typeof(DefaultApiConventions))]
+    //[ApiExplorerSettings(IgnoreApi = true)]
     public class ProdutosController : ControllerBase
     {
         private readonly IUnitOfWork _uof;
@@ -144,6 +145,11 @@ namespace APICatalogo.Controller
             }
         }
 
+        /// <summary>
+        /// Obtem um produto pelo seu Id
+        /// </summary>
+        /// <param name="id">Código do produto</param>
+        /// <returns>Um objeto Produto</returns>
         [HttpGet("{id:int:min(1)}", Name = "ObterProduto")]
         public async Task<ActionResult<ProdutoDTO>> Get([FromQuery] int id) 
         {
@@ -164,6 +170,11 @@ namespace APICatalogo.Controller
             }
         }
 
+        /// <summary>
+        /// Exibe uma relação dos produtos
+        /// </summary>
+        /// <param name="produtoDto"></param>
+        /// <returns>Retorna uma lista de objetos Produto</returns>
         [HttpPost]
         [ServiceFilter(typeof(ApiLoggingFilter))]
         public async Task<ActionResult<ProdutoDTO>> Post(ProdutoDTO produtoDto) 
