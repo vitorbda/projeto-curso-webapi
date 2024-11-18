@@ -1,4 +1,5 @@
 ﻿using CategoriasMvc.Models;
+using System.Text;
 using System.Text.Json;
 
 namespace CategoriasMvc.Services
@@ -13,35 +14,92 @@ namespace CategoriasMvc.Services
         private CategoriaViewModel categoriaVM;
         private IEnumerable<CategoriaViewModel> categoriasVM;
 
+        private readonly HttpClient _httpClient;
+
         public CategoriaService(IHttpClientFactory clientFactory)
         {
             //_options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             _clientFactory = clientFactory;
+
+            _httpClient = _clientFactory.CreateClient("CategoriasApi");
         }
 
-        public Task<bool> AtualizaCategoria(int id, CategoriaViewModel categoriaVM)
+        public async Task<IEnumerable<CategoriaViewModel>> GetCategorias()
         {
-            throw new NotImplementedException();
+            using(var response = await _httpClient.GetAsync(apiEndpoint))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    var apiResponse = await response.Content.ReadAsStreamAsync();
+
+                    categoriasVM = await JsonSerializer
+                                            .DeserializeAsync<IEnumerable<CategoriaViewModel>>
+                                            (apiResponse, _options);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+            return categoriasVM;
         }
 
-        public Task<CategoriaViewModel> CriaCategoria(CategoriaViewModel categoriaVM)
+        public async Task<CategoriaViewModel> GetById(int id)
         {
-            throw new NotImplementedException();
+            using (var response = await _httpClient.GetAsync(apiEndpoint + id))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    var apiResponse = await response.Content.ReadAsStreamAsync();
+
+                    categoriaVM = await JsonSerializer
+                                            .DeserializeAsync<CategoriaViewModel>
+                                            (apiResponse, _options);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+            return categoriaVM;
         }
 
-        public Task<bool> DeletaCategoria(int id)
+        public async Task<CategoriaViewModel> CriaCategoria(CategoriaViewModel categoriaVM)
         {
-            throw new NotImplementedException();
+            var categoria = JsonSerializer.Serialize(categoriaVM);
+            var content = new StringContent(categoria, Encoding.UTF8, "application/json");
+
+            using (var response = await _httpClient.PostAsync(apiEndpoint, content))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    var apiResponse = await response.Content.ReadAsStreamAsync();
+
+                    categoriaVM = await JsonSerializer
+                                            .DeserializeAsync<CategoriaViewModel>
+                                            (apiResponse, _options);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+            return categoriaVM;
         }
 
-        public Task<CategoriaViewModel> GetById(int id)
+        public async Task<bool> AtualizaCategoria(int id, CategoriaViewModel categoriaVM)
         {
-            throw new NotImplementedException();
+            using (var response = await _httpClient.PutAsJsonAsync(apiEndpoint + id, categoriaVM))          
+                return response.IsSuccessStatusCode;
         }
 
-        public Task<IEnumerable<CategoriaViewModel>> GetCategorias()
+        public async Task<bool> DeletaCategoria(int id)
         {
-            throw new NotImplementedException();
+            using (var response = await _httpClient.DeleteAsync(apiEndpoint + id))
+                return response.IsSuccessStatusCode;
         }
     }
 }
