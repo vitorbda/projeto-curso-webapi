@@ -1,5 +1,6 @@
 ﻿using CategoriasMvc.Models;
 using CategoriasMvc.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CategoriasMvc.Controllers
@@ -21,6 +22,26 @@ namespace CategoriasMvc.Controllers
                 return View("Error");
 
             return View(result);
+        }
+
+        public IActionResult CriarNovaCategoria()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<CategoriaViewModel>> CriarNovaCategoria(CategoriaViewModel categoriaVM)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _categoriaService.CriaCategoria(categoriaVM);
+
+                if (result is not null)
+                    return RedirectToAction(nameof(Index));
+            }
+
+            ViewBag.Erro = "Erro ao criar categoria";
+            return View(categoriaVM);            
         }
     }
 }
