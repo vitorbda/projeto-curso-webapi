@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace APICatalogo.Controller
 {
-    [Route("[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [EnableCors("OrigensComAcessoPermitido")]
     [EnableRateLimiting("fixedwindow")]
