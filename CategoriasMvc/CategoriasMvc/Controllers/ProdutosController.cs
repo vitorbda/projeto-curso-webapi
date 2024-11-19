@@ -88,5 +88,26 @@ namespace CategoriasMvc.Controllers
 
             return View(produtoVM);
         }
+
+        public async Task<IActionResult> DeletarProduto(int id)
+        {
+            var result = await _produtoService.GetProdutoPorId(id, token);
+
+            if (result is null)
+                return View("Error");
+
+            return View(result);
+        }
+
+        [HttpPost(), ActionName("DeletarProduto")]
+        public async Task<IActionResult> DeletaConfirmado(int id)
+        {
+            var result = await _produtoService.DeletaProduto(id, token);
+
+            if (result)
+                return RedirectToAction("Index");
+
+            return View("Error");
+        }
     }
 }
