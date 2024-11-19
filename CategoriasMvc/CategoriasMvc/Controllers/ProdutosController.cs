@@ -62,5 +62,31 @@ namespace CategoriasMvc.Controllers
 
             return View(result);
         }
+
+        public async Task<IActionResult> AtualizarProduto(int id)
+        {
+            var result = await _produtoService.GetProdutoPorId(id, token);
+
+            if (result is null)
+                return View("Error");
+
+            ViewBag.CategoriaId = new SelectList(await _categoriaService.GetCategorias(), "Id", "Nome");
+
+            return View(result);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ProdutoViewModel>> AtualizarProduto(int id, ProdutoViewModel produtoVM)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _produtoService.AtualizaProduto(id, produtoVM, token);
+
+                if (result)
+                    return RedirectToAction(nameof(Index));
+            }
+
+            return View(produtoVM);
+        }
     }
 }
