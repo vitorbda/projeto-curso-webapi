@@ -17,6 +17,13 @@ namespace CategoriasMvc.Extensions
                 c.DefaultRequestHeaders.Accept.Clear();
                 c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             });
+
+            services.AddHttpClient("ProdutosApi", c =>
+            {
+                c.BaseAddress = new Uri(config["ServiceUri:ProdutosApi"]);
+                c.DefaultRequestHeaders.Accept.Clear();
+                c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            });
         }
     }
 }
