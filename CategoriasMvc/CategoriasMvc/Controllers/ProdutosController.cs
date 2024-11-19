@@ -52,5 +52,15 @@ namespace CategoriasMvc.Controllers
 
             return View(produtoVM);
         }
+
+        public async Task<IActionResult> DetalhesProduto(int id)
+        {
+            var result = await _produtoService.GetProdutoPorId(id, token);
+
+            if (result is null)
+                return View("Error");
+
+            return View(result);
+        }
     }
 }

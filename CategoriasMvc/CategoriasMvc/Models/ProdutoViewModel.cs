@@ -4,7 +4,7 @@ namespace CategoriasMvc.Models
 {
     public class ProdutoViewModel
     {
-        public int ProdutoId { get; set; }
+        public int Id { get; set; }
         [Required(ErrorMessage = "O nome do produto é obrigatório")]
         public string Nome { get; set; }
         [Required(ErrorMessage = "A descrição do produto é obrigatória")]

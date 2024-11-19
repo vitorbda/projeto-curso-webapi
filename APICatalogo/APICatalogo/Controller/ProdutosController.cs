@@ -152,7 +152,7 @@ namespace APICatalogo.Controller
         /// <param name="id">Código do produto</param>
         /// <returns>Um objeto Produto</returns>
         [HttpGet("{id:int:min(1)}", Name = "ObterProduto")]
-        public async Task<ActionResult<ProdutoDTO>> Get([FromQuery] int id) 
+        public async Task<ActionResult<ProdutoDTO>> Get(int id) 
         {
             try
             {
