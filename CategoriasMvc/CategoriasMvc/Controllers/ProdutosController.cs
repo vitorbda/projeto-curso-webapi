@@ -2,6 +2,7 @@
 using CategoriasMvc.Services;
 using Microsoft.AspNetCore.Mvc;
 using CategoriasMvc.Extensions;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CategoriasMvc.Controllers
 {
@@ -25,6 +26,31 @@ namespace CategoriasMvc.Controllers
                 return View("Error");
 
             return View(result);
+        }
+
+        public async Task<IActionResult> CriarNovoProduto()
+        {
+            ViewBag.CategoriaId = new SelectList(await _categoriaService.GetCategorias(), "Id", "Nome");
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ProdutoViewModel>> CriarNovoProduto(ProdutoViewModel produtoVM)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _produtoService.CriaProduto(produtoVM, token);
+
+                if (result is not null)
+                    return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                ViewBag.CategoriaId = new SelectList(await _categoriaService.GetCategorias(), "Id", "Nome");
+            }
+
+            return View(produtoVM);
         }
     }
 }
