@@ -6,7 +6,7 @@ namespace CategoriasMvc.Services
 {
     public class Autenticacao : IAutenticacao
     {
-        const string apiEndpointAutentica = "/api/autoriza/login/";
+        const string apiEndpointAutentica = "/api/Auth/login/";
         private readonly JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         private TokenViewModel tokenUsuario;
         private readonly HttpClient _httpClient;
