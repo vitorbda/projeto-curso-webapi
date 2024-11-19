@@ -16,7 +16,7 @@ using X.PagedList;
 
 namespace APICatalogo.Controller
 {
-    [Route("[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [ApiConventionType(typeof(DefaultApiConventions))]
     //[ApiExplorerSettings(IgnoreApi = true)]
@@ -125,7 +125,7 @@ namespace APICatalogo.Controller
         }
 
         [HttpGet]
-        [Authorize("UserOnly")]
+        //[Authorize("UserOnly")]
         public async Task<ActionResult<IEnumerable<ProdutoDTO>>> Get()
         {
             try
