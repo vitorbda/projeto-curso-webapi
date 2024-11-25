@@ -24,6 +24,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MenuComponent } from './menu/menu.component';
 import { LayoutModule } from '@angular/cdk/layout';
 
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 
 
 @NgModule({
@@ -51,7 +54,10 @@ import { LayoutModule } from '@angular/cdk/layout';
     MatSidenavModule,  
     MatTableModule,
     MatToolbarModule,
-    LayoutModule
+    LayoutModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule
   ],
   
   providers: [],

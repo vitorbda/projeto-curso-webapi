@@ -40,7 +40,7 @@ export class ApiService {
       );
   }
 
-  getCategoria(id: number): Observable<Categoria> {
+  getCategoria(id: string): Observable<Categoria> {
     const url = `${apiUrl}/${id}`;
     return this.http.get<Categoria>(url, httpOptions).pipe(
       tap(_ => console.log(`leu a Categoria id=${id}`)),
