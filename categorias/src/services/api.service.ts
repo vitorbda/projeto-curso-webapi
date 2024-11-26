@@ -5,8 +5,8 @@ import { catchError, tap, map } from 'rxjs/operators';
 import { Categoria } from 'src/model/Categoria';
 import { Usuario } from 'src/model/Usuario';
 
-const apiUrl = 'https://localhost:7300/api/categorias';
-const apiLoginUrl = 'https://localhost:7300/api/autoriza/login';
+const apiUrl = 'http://localhost:7300/api/v1/categoria';
+const apiLoginUrl = 'http://localhost:7300/api/auth/login';
 var token = '';
 var httpOptions = {headers: new HttpHeaders({"Content-Type": "application/json"})};
 
@@ -25,7 +25,7 @@ export class ApiService {
 
   Login (Usuario: any): Observable<Usuario> {
     return this.http.post<Usuario>(apiLoginUrl, Usuario).pipe(
-      tap((Usuario: Usuario) => console.log(`Login usuario com email =${Usuario.email}`)),
+      tap((Usuario: Usuario) => console.log(`Login usuario com email =${Usuario.username}`)),
       catchError(this.handleError<Usuario>('Login'))
     );
   }

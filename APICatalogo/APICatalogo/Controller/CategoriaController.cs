@@ -18,7 +18,7 @@ namespace APICatalogo.Controller
 {
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    [EnableCors("OrigensComAcessoPermitido")]
+    //[EnableCors("OrigensComAcessoPermitido")]
     [EnableRateLimiting("fixedwindow")]
     [Produces("application/json")]
     //[ApiExplorerSettings(IgnoreApi = true)]
@@ -124,7 +124,7 @@ namespace APICatalogo.Controller
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Objetos Categoria</returns>
-        [DisableCors]
+        //[DisableCors]
         [HttpGet("{id:int}", Name = "ObterCategoria")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

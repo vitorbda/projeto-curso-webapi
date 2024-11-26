@@ -9,7 +9,7 @@ import { ApiService } from 'src/services/api.service';
   styleUrls: ['./categoria-editar.component.scss']
 })
 export class CategoriaEditarComponent implements OnInit {
-  categoriaId: String = '';
+  id: String = '';
   categoriaForm!: FormGroup;
   nome: String = '';
   imagemUrl: String = '';
@@ -21,7 +21,7 @@ export class CategoriaEditarComponent implements OnInit {
   ngOnInit() {
     this.getCategoria(this.route.snapshot.params['id']);
     this.categoriaForm = this.formBuilder.group({
-   'categoriaId' : [null],  
+   'id' : [null],  
    'nome' : [null, Validators.required],
    'imagemUrl' : [null, Validators.required]
  });
@@ -29,9 +29,9 @@ export class CategoriaEditarComponent implements OnInit {
 
  getCategoria(id: string) {
   this.api.getCategoria(id).subscribe(data => {
-    this.categoriaId = data.id;
+    this.id = data.id;
     this.categoriaForm.setValue({
-      categoriaId: data.id,
+      id: data.id,
       nome: data.nome,
       imagemUrl : data.imagemUrl,
     });
@@ -40,10 +40,10 @@ export class CategoriaEditarComponent implements OnInit {
 
 updateCategoria(form: NgForm) {
   this.isLoadingResults = true;
-  this.api.updateCategoria(this.categoriaId, form)
+  this.api.updateCategoria(this.id, form)
     .subscribe(res => {
         this.isLoadingResults = false;
-        this.router.navigate(['/categoria-detalhe/' + this.categoriaId]);
+        this.router.navigate(['/categoria-detalhe/' + this.id]);
       }, (err) => {
         console.log(err);
         this.isLoadingResults = false;

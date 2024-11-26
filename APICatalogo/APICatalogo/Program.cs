@@ -112,6 +112,15 @@ builder.Services.AddCors(options =>
         });
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("EnableCORS",
+        policy =>
+        {
+            policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().Build();
+        });
+});
+
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(option =>
 {
@@ -222,7 +231,7 @@ app.UseHttpsRedirection();
 
 app.UseRateLimiter();
 
-app.UseCors();
+app.UseCors("EnableCORS");
 
 app.UseAuthorization();
 

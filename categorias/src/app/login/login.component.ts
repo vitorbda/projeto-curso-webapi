@@ -10,7 +10,7 @@ import { Usuario } from 'src/model/Usuario';
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
-  email: String = '';
+  username: String = '';
   password: String = '';
   dataSource: Usuario = new Usuario();
   isLoadingResults = false;
@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
      this.loginForm = this.formBuilder.group({
-    'email' : [null, Validators.required],
+    'username' : [null, Validators.required],
     'password' : [null, Validators.required]
   });
   }
