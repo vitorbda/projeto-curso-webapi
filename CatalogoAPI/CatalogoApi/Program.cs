@@ -42,6 +42,23 @@ app.MapGet("/categorias/{id:int}", async (int id, AppDbContext db) =>
         : Results.NotFound();
 });
 
+app.MapPut("/categorias/{id:int}", async(int id, Categoria categoria, AppDbContext db) =>
+{
+    if (categoria.Id != id)
+        return Results.BadRequest();
+
+    var categoriaDb = await db.Categorias.FindAsync(id);
+
+    if (categoriaDb is null)
+        return Results.NotFound();
+
+    categoriaDb.Nome = categoria.Nome;
+    categoriaDb.Descricao = categoria.Descricao;
+
+    await db.SaveChangesAsync();
+    return Results.Ok(categoriaDb);
+});
+
 app.UseHttpsRedirection();
 
 app.Run();
