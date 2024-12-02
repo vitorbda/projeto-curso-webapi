@@ -21,6 +21,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.MapGet("/", () => "Catalogo de Produtos - 2024");
+
 app.UseHttpsRedirection();
 
 app.Run();
