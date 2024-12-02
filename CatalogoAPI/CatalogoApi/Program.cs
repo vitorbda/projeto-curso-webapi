@@ -22,7 +22,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/", () => "Catalogo de Produtos - 2024");
+app.MapGet("/", () => "Catalogo de Produtos - 2024").ExcludeFromDescription();
 
 app.MapPost("/categorias", async (Categoria categoria, AppDbContext db) =>
 {
@@ -57,6 +57,19 @@ app.MapPut("/categorias/{id:int}", async(int id, Categoria categoria, AppDbConte
 
     await db.SaveChangesAsync();
     return Results.Ok(categoriaDb);
+});
+
+app.MapDelete("/categorias/{id:int}", async (int id, AppDbContext db) =>
+{
+    var categoria = await db.Categorias.FindAsync(id);
+
+    if (categoria is null)
+        return Results.NotFound();
+
+    db.Categorias.Remove(categoria);
+    await db.SaveChangesAsync();
+
+    return Results.NoContent();
 });
 
 app.UseHttpsRedirection();
