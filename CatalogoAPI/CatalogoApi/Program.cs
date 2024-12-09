@@ -1,4 +1,5 @@
 using CatalogoApi.ApiEndpoints;
+using CatalogoApi.AppServicesExtensions;
 using CatalogoApi.Context;
 using CatalogoApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -72,11 +73,11 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+var environment = app.Environment;
+
+app.UseExceptionHandling(environment)
+    .UseSwaggerMiddleware()
+    .UseAppCors();
 
 app.MapAutenticacaoEndpoints();
 app.MapCategoriasEndpoints();
