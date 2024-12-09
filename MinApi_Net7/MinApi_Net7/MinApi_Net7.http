@@ -1,0 +1,6 @@
+@MinApi_Net7_HostAddress = http://localhost:5124
+
+GET {{MinApi_Net7_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
