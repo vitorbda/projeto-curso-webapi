@@ -6,11 +6,41 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "ApiCatalogo", Version = "v1" });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = @"JWT Authorization header using the Bearer scheme.
+                    Enter 'Bearer'[space].Example: \'Bearer 12345abcdef\'",
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                          new OpenApiSecurityScheme
+                          {
+                              Reference = new OpenApiReference
+                              {
+                                  Type = ReferenceType.SecurityScheme,
+                                  Id = "Bearer"
+                              }
+                          },
+                         new string[] {}
+                    }
+                });
+});
+
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -68,7 +98,7 @@ app.MapPost("/login", [AllowAnonymous] (UserModel userModel, ITokenService token
     }
     else
     {
-        return Results.BadRequest("Login Inv lido");
+        return Results.BadRequest("Login Inválido");
     }
 }).Produces(StatusCodes.Status400BadRequest)
               .Produces(StatusCodes.Status200OK)
@@ -88,7 +118,7 @@ app.MapPost("/categorias", async (Categoria categoria, AppDbContext db) =>
     return Results.Created($"/categorias/{categoria.Id}", categoria);
 });
 
-app.MapGet("/categorias", async (AppDbContext db) => await db.Categorias.ToListAsync()).RequireAuthorization();
+app.MapGet("/categorias", async (AppDbContext db) => await db.Categorias.ToListAsync()).WithTags("Categorias").RequireAuthorization();
 
 app.MapGet("/categorias/{id:int}", async (int id, AppDbContext db) =>
 {
@@ -138,7 +168,7 @@ app.MapPost("/produtos", async (Produto produto, AppDbContext db) =>
     return Results.Created($"/produtos/{produto.Id}", produto);
 });
 
-app.MapGet("/produtos", async (AppDbContext db) => await db.Produtos.ToListAsync()).RequireAuthorization();
+app.MapGet("/produtos", async (AppDbContext db) => await db.Produtos.ToListAsync()).WithTags("Produto").RequireAuthorization();
 
 app.MapGet("/produtos/{id:int}", async (int id, AppDbContext db) =>
 {
