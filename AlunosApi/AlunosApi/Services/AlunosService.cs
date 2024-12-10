@@ -26,7 +26,7 @@ namespace AlunosApi.Services
         public async Task<IEnumerable<Aluno>> GetAlunosByNome(string nome)
         {
             return !string.IsNullOrWhiteSpace(nome)
-                ? await _context.Alunos.Where(a => a.Nome == nome).ToListAsync() 
+                ? await _context.Alunos.Where(a => a.Nome.Contains(nome)).ToListAsync() 
                 : await GetAlunos();
         }
 
