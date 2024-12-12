@@ -23,3 +23,6 @@
 # Outros caches que não são úteis no Git
 .DS_Store
 Thumbs.db
+
+**/node_modules/
+
