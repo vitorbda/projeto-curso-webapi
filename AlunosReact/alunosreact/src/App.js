@@ -12,6 +12,22 @@ function App() {
 
   const[data, setData] = useState([]);
 
+  const [alunoSelecionado, setAlunoSelecionado] = useState({id: '', nome: '', email: '', idade: ''});
+
+  const [modalIncluir, setModalIncluir] = useState(false);
+
+  const abrirFecharModal = () => {
+    setModalIncluir(!modalIncluir);
+  };
+
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setAlunoSelecionado({
+      ...alunoSelecionado, [name]: value
+    });
+    console.log(alunoSelecionado);
+  };
+
   const pedidoGet = async() => {
     await axios.get(baseUrl)
     .then(response => {
@@ -22,18 +38,32 @@ function App() {
     })
   };
 
+  const pedidoPost = async() => {
+    delete alunoSelecionado.id;
+    alunoSelecionado.idade = parseInt(alunoSelecionado.idade);
+
+    await axios.post(baseUrl, alunoSelecionado)
+    .then(response => {
+      setData(data.concat(response.data));
+      abrirFecharModal();
+    })
+    .catch(error => {
+      console.log(error);
+    })
+  };
+
   useEffect(() => {
     pedidoGet();
-  })
+  },[])
 
   return (
-    <div className="App">
+    <div className="aluno-container">
       <br />
       <h3>Cadastro de alunos</h3>
 
       <header>
         <img src={logoCadastro} alt='Cadastro' />
-        <button className='btn btn-success'>Incluir novo aluno</button>
+        <button className='btn btn-success' onClick={abrirFecharModal}>Incluir novo aluno</button>
       </header>
 
       <table className='table table-bordered'>
@@ -65,6 +95,36 @@ function App() {
         </tbody>
 
       </table>
+
+
+      <Modal isOpen={modalIncluir}>
+
+        <ModalHeader>Incluir Alunos</ModalHeader>
+
+        <ModalBody>
+          <div className='form-group'>
+            <label>Nome: </label>
+            <br />
+            <input type='text' name='nome' className='form-control' onChange={handleChange} />
+            <br />
+            <label>Email: </label>
+            <br />
+            <input type='text' name='email' className='form-control' onChange={handleChange} />
+            <br />
+            <label>Idade: </label>
+            <br />
+            <input type='number' name='idade' className='form-control' onChange={handleChange} />
+          </div>
+        </ModalBody>
+        
+        <ModalFooter>
+          <button className='btn btn-primary' onClick={pedidoPost}>Incluir</button>{"   "}
+          <button className='btn btn-danger' onClick={abrirFecharModal}>Cancelar</button>
+        </ModalFooter>
+
+      </Modal>
+
+
 
     </div>
   );
