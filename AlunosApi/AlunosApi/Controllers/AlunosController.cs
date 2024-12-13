@@ -94,7 +94,7 @@ namespace AlunosApi.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteAluno(int id)
         {
             try
