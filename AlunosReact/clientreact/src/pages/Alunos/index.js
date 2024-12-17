@@ -7,7 +7,9 @@ import api from '../../services/api';
 
 export default function Alunos() {
 
-    const [nome, setNome] = useState('');
+    const [searchInput, setSearchInput] = useState('');
+    const [filtro, setFiltro] = useState([]);
+
     const [alunos, setAlunos] = useState([]);
 
     const email = localStorage.getItem('email');
@@ -20,6 +22,25 @@ export default function Alunos() {
             Authorization: `bearer ${token}`
         }
     }
+
+    const searchAlunos = () => {        
+        if (searchInput !== '') {
+            const dadosFiltrados = alunos.filter((item) => {
+                return Object.values(item)
+                .join('').toLowerCase()
+                .includes(searchInput.toLowerCase())
+            });
+
+            setFiltro(dadosFiltrados);
+            return;
+        }
+
+        setFiltro(alunos);
+    }
+
+    useEffect(() => {
+        searchAlunos();
+    }, [searchInput]);
 
     async function logout() {
         try {
@@ -43,10 +64,23 @@ export default function Alunos() {
         }
     }
 
+    async function deleteAluno(id) {
+        if (window.confirm(`Deseja deletar o aluno ${alunos.filter(a => a.id == id)[0].nome}?`)){
+            await api.delete(`/api/alunos/${id}`, authorization);
+            
+            const alunosAtualizados = alunos.filter(a => a.id !== id);
+            setAlunos(alunosAtualizados);
+            setFiltro(alunosAtualizados);
+        }
+    }
+
     useEffect(() => {
         api.get('api/alunos', authorization)
         .then(
-            response => {setAlunos(response.data)})
+            response => {
+                setAlunos(response.data);
+                setFiltro(response.data);
+            })
     },[])
 
     return (
@@ -64,15 +98,15 @@ export default function Alunos() {
             </header>
 
             <form>
-                <input type='text' placeholder='Nome' />
-                <button type='button' className='button'>
-                    Filtrar aluno por nome (parcial)
-                </button>
+                <input type='text' placeholder='Nome' 
+                    value={searchInput}
+                    onChange={e => setSearchInput(e.target.value)}
+                />
             </form>
             <h1>Relação de Alunos</h1>
 
             <ul>
-                {alunos.map(aluno => (
+                {filtro.map(aluno => (
                     <li key={aluno.id}>
                         <b>Nome: </b> {aluno.nome} <br/><br/>
                         <b>Email: </b> {aluno.email} <br/><br/>
@@ -81,7 +115,7 @@ export default function Alunos() {
                         <button type='button' onClick={() => editAluno(aluno.id)}>
                             <FiEdit size={25} color='#17202a' />
                         </button>
-                        <button type='button'>
+                        <button type='button' onClick={() => deleteAluno(aluno.id)}>
                             <FiUserX size={25} color='#17202a' />
                         </button>
                     </li>
