@@ -1,4 +1,5 @@
 ﻿
+using AlunosApi.Context;
 using Microsoft.AspNetCore.Identity;
 
 namespace AlunosApi.Services
@@ -34,7 +35,7 @@ namespace AlunosApi.Services
                 Email = email
             };
 
-            var result = await _userManager.CreateAsync(appUser);
+            var result = await _userManager.CreateAsync(appUser, password);
 
             if (result.Succeeded) 
                 await _signManager.SignInAsync(appUser, isPersistent: false);
