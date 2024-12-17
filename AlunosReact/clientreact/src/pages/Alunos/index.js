@@ -34,6 +34,15 @@ export default function Alunos() {
         }
     }
 
+    async function editAluno(id) {
+        try {
+            navigate(`/aluno/novo/${id}`);
+        } 
+        catch (error) {
+            
+        }
+    }
+
     useEffect(() => {
         api.get('api/alunos', authorization)
         .then(
@@ -69,7 +78,7 @@ export default function Alunos() {
                         <b>Email: </b> {aluno.email} <br/><br/>
                         <b>Idade: </b> {aluno.idade} <br/><br/>
 
-                        <button type='button'>
+                        <button type='button' onClick={() => editAluno(aluno.id)}>
                             <FiEdit size={25} color='#17202a' />
                         </button>
                         <button type='button'>
