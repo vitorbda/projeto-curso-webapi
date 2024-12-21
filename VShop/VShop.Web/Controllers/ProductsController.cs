@@ -15,6 +15,11 @@ public class ProductsController : Controller
         _categoryService = categoryService;
     }
 
+    private async Task<SelectList> ReturnCategoriesSelectList()
+    {
+        return new SelectList(await _categoryService.GetAllCategories(), "Id", "Name");
+    }
+
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ProductViewModel>>> Index()
     {
@@ -28,7 +33,7 @@ public class ProductsController : Controller
     [HttpGet]
     public async Task<ActionResult> Create()
     {
-        ViewBag.Categories = new SelectList(await _categoryService.GetAllCategories(), "Id", "Name");
+        ViewBag.Categories = await ReturnCategoriesSelectList();
 
         return View();
     }
@@ -45,9 +50,53 @@ public class ProductsController : Controller
         }
         else
         {
-            ViewBag.Categories = new SelectList(await _categoryService.GetAllCategories(), "Id", "Name");
+            ViewBag.Categories = await ReturnCategoriesSelectList();
         }
 
         return View(productVM);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<ProductViewModel>> Update(int id)
+    {
+        ViewBag.Categories = await ReturnCategoriesSelectList();
+
+        var result = await _productService.GetProductById(id);
+
+        return result is null
+            ? View("Error") 
+            : View(result);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> Update(ProductViewModel productVM)
+    {
+        if (!ModelState.IsValid) return View(productVM);
+
+        var result = await _productService.UpdateProduct(productVM);
+
+        return result is null
+            ? View(productVM)
+            : RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<ProductViewModel>> Delete(int id)
+    {
+        var result = await _productService.GetProductById(id);
+
+        return result is null
+            ? View("Error")
+            : View(result);
+    }
+
+    [HttpPost, ActionName("DeleteProduct")]
+    public async Task<ActionResult> DeleteConfirmed(int id)
+    {
+        var result = await _productService.DeleteProduct(id);
+
+        return !result
+            ? View("Error")
+            : RedirectToAction(nameof(Index));
     }
 }

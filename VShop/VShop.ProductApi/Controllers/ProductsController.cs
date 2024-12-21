@@ -47,10 +47,9 @@ public class ProductsController : ControllerBase
         return new CreatedAtRouteResult("GetProduct", new { id = productDTO.Id });
     }
 
-    [HttpPut("{id:int}")]
-    public async Task<ActionResult> Put(int id, ProductDTO productDTO)
+    [HttpPut]
+    public async Task<ActionResult> Put(ProductDTO productDTO)
     {
-        if (id != productDTO.Id) return BadRequest("Ids não conferem");
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
         await _service.UpdateProduct(productDTO);

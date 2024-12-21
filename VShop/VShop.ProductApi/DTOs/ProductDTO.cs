@@ -19,7 +19,7 @@ public class ProductDTO
     [Range(1, 9999)]
     public long Stock { get; set; }
     public string ImageUrl { get; set; }
-    public string CategoryName { get; }
+    public string CategoryName => Category.Name;
 
     [JsonIgnore]
     public Category Category { get; set; }
