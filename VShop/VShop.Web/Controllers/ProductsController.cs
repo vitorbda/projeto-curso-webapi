@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using VShop.Web.Models;
@@ -19,13 +20,20 @@ public class ProductsController : Controller
 
     private async Task<SelectList> ReturnCategoriesSelectList()
     {
-        return new SelectList(await _categoryService.GetAllCategories(), "Id", "Name");
+        var token = await GetAccessToken();
+        return new SelectList(await _categoryService.GetAllCategories(token), "Id", "Name");
+    }
+
+    private async Task<string> GetAccessToken()
+    {
+        return await HttpContext.GetTokenAsync("access_token");
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ProductViewModel>>> Index()
     {
-        var result = await _productService.GetAllProducts();
+        var token = await GetAccessToken();
+        var result = await _productService.GetAllProducts(token);
 
         return result is null
             ? View("Error")
@@ -35,6 +43,7 @@ public class ProductsController : Controller
     [HttpGet]
     public async Task<ActionResult> Create()
     {
+        var token = await GetAccessToken();
         ViewBag.Categories = await ReturnCategoriesSelectList();
 
         return View();
@@ -44,9 +53,10 @@ public class ProductsController : Controller
     [Authorize]
     public async Task<ActionResult<ProductViewModel>> Create(ProductViewModel productVM)
     {
-        if (ModelState.IsValid) 
-        { 
-            var result = await _productService.CreateProduct(productVM);
+        var token = await GetAccessToken();
+        if (ModelState.IsValid)
+        {
+            var result = await _productService.CreateProduct(productVM, token);
 
             if (result != null)
                 return RedirectToAction(nameof(Index));
@@ -62,12 +72,13 @@ public class ProductsController : Controller
     [HttpGet]
     public async Task<ActionResult<ProductViewModel>> Update(int id)
     {
+        var token = await GetAccessToken();
         ViewBag.Categories = await ReturnCategoriesSelectList();
 
-        var result = await _productService.GetProductById(id);
+        var result = await _productService.GetProductById(id, token);
 
         return result is null
-            ? View("Error") 
+            ? View("Error")
             : View(result);
     }
 
@@ -75,9 +86,10 @@ public class ProductsController : Controller
     [Authorize]
     public async Task<ActionResult> Update(ProductViewModel productVM)
     {
+        var token = await GetAccessToken();
         if (!ModelState.IsValid) return View(productVM);
 
-        var result = await _productService.UpdateProduct(productVM);
+        var result = await _productService.UpdateProduct(productVM, token);
 
         return result is null
             ? View(productVM)
@@ -88,7 +100,8 @@ public class ProductsController : Controller
     [Authorize]
     public async Task<ActionResult<ProductViewModel>> Delete(int id)
     {
-        var result = await _productService.GetProductById(id);
+        var token = await GetAccessToken();
+        var result = await _productService.GetProductById(id, token);
 
         return result is null
             ? View("Error")
@@ -99,7 +112,8 @@ public class ProductsController : Controller
     [Authorize(Roles = Role.Admin)]
     public async Task<ActionResult> DeleteConfirmed(int id)
     {
-        var result = await _productService.DeleteProduct(id);
+        var token = await GetAccessToken();
+        var result = await _productService.DeleteProduct(id, token);
 
         return !result
             ? View("Error")
