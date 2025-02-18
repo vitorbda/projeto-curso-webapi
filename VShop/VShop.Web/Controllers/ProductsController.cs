@@ -7,6 +7,7 @@ using VShop.Web.Roles;
 using VShop.Web.Services.Interfaces;
 
 namespace VShop.Web.Controllers;
+[Authorize(Roles = Role.Admin)]
 public class ProductsController : Controller
 {
     private readonly IProductService _productService;
