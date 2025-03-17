@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using VShop.Web.Services;
 using VShop.Web.Services.Interfaces;
 
@@ -13,8 +13,11 @@ builder.Services.AddHttpClient("ProductApi", c =>
     c.BaseAddress = new Uri(builder.Configuration["ServiceUri:ProductApi"]);
 });
 
+builder.Services.AddHttpClient<ICartService, CartService>("CartApi", c => c.BaseAddress = new Uri(builder.Configuration["ServiceUri:CartApi"]));
+
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 
 builder.Services.AddAuthentication(options =>
