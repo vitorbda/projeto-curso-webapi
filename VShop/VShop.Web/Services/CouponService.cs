@@ -28,21 +28,20 @@ public class CouponService : ICouponService
             if (response.IsSuccessStatusCode)
             {
                 var apiResponse = await response.Content.ReadAsStreamAsync();
-                couponVM = await JsonSerializer.DeserializeAsync<CouponViewModel>
-                              (apiResponse, _options);
+                couponVM = await JsonSerializer.DeserializeAsync<CouponViewModel> (apiResponse, _options);
             }
             else
             {
                 return null;
             }
         }
+
         return couponVM;
     }
 
     private static void PutTokenInHeaderAuthorization(string token, HttpClient client)
     {
-        client.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", token);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
 }

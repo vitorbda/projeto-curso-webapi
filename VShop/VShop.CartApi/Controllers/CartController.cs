@@ -20,11 +20,9 @@ public class CartController : ControllerBase
     {
         var cart = await _repository.GetCartByUserIdAsync(checkoutDto.UserId);
 
-        if (cart is null)
-        {
+        if (cart is null)        
             return NotFound($"Cart Not found for {checkoutDto.UserId}");
-        }
-
+        
         checkoutDto.CartItems = cart.CartItems;
         checkoutDto.DateTime = DateTime.Now;
 
@@ -34,14 +32,11 @@ public class CartController : ControllerBase
    [HttpPost("applycoupon")]
     public async Task<ActionResult<CartDTO>> ApplyCoupon(CartDTO cartDto)
     {
-        var result = await _repository.ApplyCouponAsync(cartDto.CartHeader.UserId,
-                                                        cartDto.CartHeader.CouponCode);
+        var result = await _repository.ApplyCouponAsync(cartDto.CartHeader.UserId, cartDto.CartHeader.CouponCode);
 
-        if (!result)
-        {
-            return NotFound($"CartHeader not found for userId = {cartDto.CartHeader.UserId}");
-        }
-        return Ok(result);
+        return result 
+            ? Ok(result)
+            : NotFound($"CartHeader not found for userId = {cartDto.CartHeader.UserId}");
     }
 
     [HttpDelete("deletecoupon/{userId}")]
@@ -49,12 +44,9 @@ public class CartController : ControllerBase
     {
         var result = await _repository.DeleteCouponAsync(userId);
 
-        if (!result)
-        {
-            return NotFound($"Discount Coupon not found for userId = {userId}");
-        }
-
-        return Ok(result);
+        return result
+            ? Ok(result)
+            : NotFound($"Discount Coupon not found for userId = {userId}");
     }
 
     [HttpGet("getcart/{userid}")]
@@ -62,10 +54,9 @@ public class CartController : ControllerBase
     {
         var cartDto = await _repository.GetCartByUserIdAsync(userid);
 
-        if (cartDto is null)
-            return NotFound();
-
-        return Ok(cartDto);
+        return cartDto is null
+            ? NotFound()
+            : Ok(cartDto);
     }
 
 
@@ -74,18 +65,19 @@ public class CartController : ControllerBase
     {
         var cart = await _repository.UpdateCartAsync(cartDto);
 
-        if (cart is null)
-            return NotFound();
-
-        return Ok(cart);
+        return cart is null
+            ? NotFound()
+            : Ok(cart);
     }
 
     [HttpPut("updatecart")]
     public async Task<ActionResult<CartDTO>> UpdateCart(CartDTO cartDto)
     {
         var cart = await _repository.UpdateCartAsync(cartDto);
-        if (cart == null) return NotFound();
-        return Ok(cart);
+
+        return cart is null
+            ? NotFound()
+            : Ok(cart);
     }
 
     [HttpDelete("deletecart/{id}")]
@@ -93,9 +85,8 @@ public class CartController : ControllerBase
     {
         var status = await _repository.DeleteItemCartAsync(id);
 
-        if (!status)
-            return BadRequest();
-
-        return Ok(status);
+        return status
+            ? Ok(status)
+            : BadRequest();
     }
 }

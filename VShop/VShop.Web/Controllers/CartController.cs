@@ -20,7 +20,7 @@ namespace VShop.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Checkout()
         {
-            CartViewModel? cartVM = await GetCartByUser();
+            CartViewModel cartVM = await GetCartByUser();
             return View(cartVM);
         }
 
@@ -31,11 +31,10 @@ namespace VShop.Web.Controllers
             {
                 var result = await _cartService.CheckoutAsync(cartVM.CartHeader, await GetAccessToken());
 
-                if (result is not null)
-                {
-                    return RedirectToAction(nameof(CheckoutCompleted));
-                }
+                if (result is not null)                
+                    return RedirectToAction(nameof(CheckoutCompleted));                
             }
+
             return View(cartVM);
         }
 
@@ -52,11 +51,10 @@ namespace VShop.Web.Controllers
             if (ModelState.IsValid)
             {
                 var result = await _cartService.ApplyCouponAsync(cartVM, await GetAccessToken());
-                if (result)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
+                if (result)                
+                    return RedirectToAction(nameof(Index));                
             }
+
             return View();
         }
 
@@ -65,41 +63,37 @@ namespace VShop.Web.Controllers
         {
             var result = await _cartService.RemoveCouponAsync(GetUserId(), await GetAccessToken());
 
-            if (result)
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            return View();
+            return result
+                ? View()
+                : RedirectToAction(nameof(Index));
         }
 
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            CartViewModel? cartVM = await GetCartByUser();
+            CartViewModel cartVM = await GetCartByUser();
 
-            if(cartVM is null)
-            {
-                ModelState.AddModelError("CartNotFound", "Does not exist a cart yet...Come on Shopping...");
-                return View("/Views/Cart/CartNotFound.cshtml");
-            }
+            if (cartVM is not null) 
+                return View(cartVM);
 
-            return View(cartVM);
+            ModelState.AddModelError("CartNotFound", "Does not exist a cart yet...Come on Shopping...");
+            return View("/Views/Cart/CartNotFound.cshtml");
+
         }
 
 
 
         private async Task<CartViewModel> GetCartByUser()
         {
-
             var cart = await _cartService.GetCartByUserIdAsync(GetUserId(), await GetAccessToken());
 
-            if(cart?.CartHeader is not null)
+            if(cart.CartHeader is not null)
             {
                 if (!string.IsNullOrEmpty(cart.CartHeader.CouponCode))
                 {
                     var coupon = await _couponService.GetDiscountCoupon(cart.CartHeader.CouponCode,
                                                                         await GetAccessToken());
-                    if (coupon?.CouponCode is not null)
+                    if (coupon.CouponCode is not null)
                     {
                         cart.CartHeader.Discount = coupon.Discount;
                     }
@@ -120,11 +114,9 @@ namespace VShop.Web.Controllers
         {
             var result = await _cartService.RemoveItemFromCartAsync(id, await GetAccessToken());
 
-            if (result)
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            return View(id);
+            return result
+                ? RedirectToAction(nameof(Index))
+                : View(id);
         }
 
         private async Task<string> GetAccessToken()
