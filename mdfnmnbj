@@ -1,0 +1,58 @@
+[1mdiff --git a/VShop/VShop.ProductApi/Program.cs b/VShop/VShop.ProductApi/Program.cs[m
+[1mindex 574a4c38..d5be9701 100644[m
+[1m--- a/VShop/VShop.ProductApi/Program.cs[m
+[1m+++ b/VShop/VShop.ProductApi/Program.cs[m
+[36m@@ -15,6 +15,8 @@[m [mbuilder.Services.AddDbContext<AppDbContext>(options =>[m
+     options.UseMySql(mySqlConnection, ServerVersion.AutoDetect(mySqlConnection))[m
+ );[m
+ [m
+[32m+[m[32mbuilder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());[m
+[32m+[m
+ var app = builder.Build();[m
+ [m
+ // Configure the HTTP request pipeline.[m
+[1mdiff --git a/VShop/VShop.ProductApi/VShop.ProductApi.csproj b/VShop/VShop.ProductApi/VShop.ProductApi.csproj[m
+[1mindex 7a9fe539..4bff33f7 100644[m
+[1m--- a/VShop/VShop.ProductApi/VShop.ProductApi.csproj[m
+[1m+++ b/VShop/VShop.ProductApi/VShop.ProductApi.csproj[m
+[36m@@ -8,6 +8,15 @@[m
+   </PropertyGroup>[m
+ [m
+   <ItemGroup>[m
+[32m+[m[32m    <Compile Remove="Controllers\**" />[m
+[32m+[m[32m    <Content Remove="Controllers\**" />[m
+[32m+[m[32m    <EmbeddedResource Remove="Controllers\**" />[m
+[32m+[m[32m    <None Remove="Controllers\**" />[m
+[32m+[m[32m  </ItemGroup>[m
+[32m+[m
+[32m+[m[32m  <ItemGroup>[m
+[32m+[m[32m    <PackageReference Include="AutoMapper" Version="12.0.1" />[m
+[32m+[m[32m    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />[m
+     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />[m
+     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">[m
+       <PrivateAssets>all</PrivateAssets>[m
+[36m@@ -16,8 +25,4 @@[m
+     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0-preview.2.efcore.9.0.0" />[m
+   </ItemGroup>[m
+ [m
+[31m-  <ItemGroup>[m
+[31m-    <Folder Include="Controllers\" />[m
+[31m-  </ItemGroup>[m
+[31m-[m
+ </Project>[m
+[1mdiff --git a/VShop/VShop.sln b/VShop/VShop.sln[m
+[1mindex 37dfe5cf..f454433a 100644[m
+[1m--- a/VShop/VShop.sln[m
+[1m+++ b/VShop/VShop.sln[m
+[36m@@ -5,6 +5,11 @@[m [mVisualStudioVersion = 17.11.35431.28[m
+ MinimumVisualStudioVersion = 10.0.40219.1[m
+ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VShop.ProductApi", "VShop.ProductApi\VShop.ProductApi.csproj", "{839B5B92-903C-4200-894B-178E230B72E9}"[m
+ EndProject[m
+[32m+[m[32mProject("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C9A102EA-6EE3-49BB-A45F-BAC871FABA96}"[m
+[32m+[m	[32mProjectSection(SolutionItems) = preProject[m
+[32m+[m		[32m.editorconfig = .editorconfig[m
+[32m+[m	[32mEndProjectSection[m
+[32m+[m[32mEndProject[m
+ Global[m
+ 	GlobalSection(SolutionConfigurationPlatforms) = preSolution[m
+ 		Debug|Any CPU = Debug|Any CPU[m
